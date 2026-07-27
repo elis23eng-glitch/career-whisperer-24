@@ -12,6 +12,7 @@ import {
   suggestionSchema,
 } from "./ai-schemas";
 import { jobExtractionSchema, matchResultSchema, resumeContentSchema } from "./types";
+import type { JobExtraction, MatchResultData, ResumeContent } from "./types";
 
 function gateway() {
   const key = process.env.LOVABLE_API_KEY;
@@ -67,7 +68,11 @@ async function callAi<T>(
   }
 }
 
-export async function runAnalysis(data: { jobText: string; resumeText: string }) {
+export async function runAnalysis(data: { jobText: string; resumeText: string }): Promise<{
+  job: JobExtraction;
+  resume: ResumeContent;
+  match: MatchResultData;
+}> {
   const job = await callAi(
     ANALYST_SYSTEM,
     `Extraia os dados estruturados desta descrição de vaga. Se um campo não estiver presente, deixe vazio.\n\nDESCRIÇÃO DA VAGA:\n"""${data.jobText.slice(0, 20000)}"""`,
@@ -113,7 +118,7 @@ export async function runGenerate(data: {
   resumeContent?: unknown;
   resumeRawText: string;
   confirmedExperiences: unknown[];
-}) {
+}): Promise<ResumeContent> {
   const confirmed = data.confirmedExperiences?.length
     ? `\n\nINFORMAÇÕES CONFIRMADAS PELO USUÁRIO (pode usar, sem exagerar):\n${JSON.stringify(
         data.confirmedExperiences,
