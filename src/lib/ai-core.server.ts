@@ -37,12 +37,12 @@ function parseJson(raw: string) {
   return JSON.parse(cleaned.slice(start, end + 1));
 }
 
-async function callAi<T>(
+async function callAi<S extends z.ZodTypeAny>(
   system: string,
   prompt: string,
-  schema: z.ZodType<T>,
+  schema: S,
   hint: string,
-): Promise<T> {
+): Promise<z.infer<S>> {
   const provider = gateway();
   const run = async (extra: string) => {
     const res = await generateText({
