@@ -44,7 +44,10 @@ function LibraryPage() {
   useEffect(() => {
     const refresh = () => setItems(listAnalyses());
     refresh();
-    return subscribeStorage(refresh);
+    const unsubscribe = subscribeStorage(refresh);
+    return () => {
+      unsubscribe();
+    };
   }, []);
 
   const filtered = items.filter((r) =>
