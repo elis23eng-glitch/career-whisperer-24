@@ -109,8 +109,8 @@ CURRÍCULO (estruturado): ${JSON.stringify(resume).slice(0, 15000)}`,
 
 export async function runGenerate(data: {
   jobText: string;
-  jobExtraction: unknown;
-  resumeContent: unknown;
+  jobExtraction?: unknown;
+  resumeContent?: unknown;
   resumeRawText: string;
   confirmedExperiences: unknown[];
 }) {
