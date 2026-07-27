@@ -304,7 +304,7 @@ export function AtsResumeTab({
       </div>
 
       <div className="hidden lg:block">
-        <ResizablePanelGroup direction="horizontal" className="min-h-[600px] rounded-xl border">
+        <ResizablePanelGroup className="min-h-[600px] rounded-xl border">
           <ResizablePanel defaultSize={48} minSize={30} className="p-4">
             <div className="h-[70vh] overflow-y-auto">{editorPanel}</div>
           </ResizablePanel>
