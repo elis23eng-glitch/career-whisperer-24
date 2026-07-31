@@ -42,7 +42,7 @@ function gatewayStatus(error: unknown): number | undefined {
   const code = e?.statusCode ?? e?.status;
   if (typeof code === "number") return code;
   const message = error instanceof Error ? error.message : "";
-  const match = /\b(4\d\d|5\d\d)\b/.exec(message);
+  const match = /status(?: code)?[: ]+(\d{3})/i.exec(message);
   return match ? Number(match[1]) : undefined;
 }
 
