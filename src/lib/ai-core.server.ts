@@ -37,6 +37,32 @@ function parseJson(raw: string) {
   return JSON.parse(cleaned.slice(start, end + 1));
 }
 
+function gatewayStatus(error: unknown): number | undefined {
+  const e = error as { statusCode?: number; status?: number; responseBody?: string } | null;
+  const code = e?.statusCode ?? e?.status;
+  if (typeof code === "number") return code;
+  const message = error instanceof Error ? error.message : "";
+  const match = /\b(4\d\d|5\d\d)\b/.exec(message);
+  return match ? Number(match[1]) : undefined;
+}
+
+function mapGatewayError(error: unknown): Error | undefined {
+  const status = gatewayStatus(error);
+  const body = error instanceof Error ? error.message : String(error ?? "");
+  if (status === 402 || /not enough credits|payment_required/i.test(body)) {
+    return new Error(
+      "Os créditos de IA do projeto acabaram. Recarregue os créditos no painel do Lovable (Settings → Workspace → Usage) para voltar a gerar análises.",
+    );
+  }
+  if (status === 429 || /rate.?limit/i.test(body)) {
+    return new Error("Muitas solicitações em sequência. Aguarde alguns segundos e tente novamente.");
+  }
+  if (status === 401 || status === 403) {
+    return new Error("Serviço de IA sem autorização. Verifique a chave de IA do projeto.");
+  }
+  return undefined;
+}
+
 async function callAi<S extends z.ZodTypeAny>(
   system: string,
   prompt: string,
@@ -45,28 +71,38 @@ async function callAi<S extends z.ZodTypeAny>(
 ): Promise<z.infer<S>> {
   const provider = gateway();
   const run = async (extra: string) => {
-    const res = await generateText({
-      model: provider(MODEL),
-      system,
-      prompt: `${prompt}\n\nRetorne SOMENTE um JSON válido com esta forma:\n${hint}${extra}`,
-    });
-    return res.text ?? "";
+    try {
+      const res = await generateText({
+        model: provider(MODEL),
+        system,
+        prompt: `${prompt}\n\nRetorne SOMENTE um JSON válido com esta forma:\n${hint}${extra}`,
+      });
+      return res.text ?? "";
+    } catch (error) {
+      const mapped = mapGatewayError(error);
+      if (mapped) throw mapped;
+      throw error;
+    }
   };
 
   try {
     return schema.parse(parseJson(await run("")));
   } catch (first) {
+    if (mapGatewayError(first)) throw first;
     try {
       const retry = await run(
         "\n\nATENÇÃO: a resposta anterior não era um JSON válido conforme o schema. Retorne apenas JSON válido, sem comentários e sem texto adicional.",
       );
       return schema.parse(parseJson(retry));
-    } catch {
+    } catch (second) {
+      const mapped = mapGatewayError(second) ?? mapGatewayError(first);
+      if (mapped) throw mapped;
       const detail = first instanceof Error ? first.message : "erro desconhecido";
       throw new Error(`A resposta da IA não pôde ser validada. Detalhe técnico: ${detail}`);
     }
   }
 }
+
 
 export async function runAnalysis(data: { jobText: string; resumeText: string }): Promise<{
   job: JobExtraction;
