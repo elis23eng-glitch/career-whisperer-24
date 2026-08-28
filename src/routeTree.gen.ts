@@ -9,12 +9,18 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as VagasRouteImport } from './routes/vagas'
 import { Route as CurriculosRouteImport } from './routes/curriculos'
 import { Route as ComoFuncionaRouteImport } from './routes/como-funciona'
 import { Route as AnaliseRouteImport } from './routes/analise'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ResultadoIdRouteImport } from './routes/resultado.$id'
 
+const VagasRoute = VagasRouteImport.update({
+  id: '/vagas',
+  path: '/vagas',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CurriculosRoute = CurriculosRouteImport.update({
   id: '/curriculos',
   path: '/curriculos',
@@ -46,6 +52,7 @@ export interface FileRoutesByFullPath {
   '/analise': typeof AnaliseRoute
   '/como-funciona': typeof ComoFuncionaRoute
   '/curriculos': typeof CurriculosRoute
+  '/vagas': typeof VagasRoute
   '/resultado/$id': typeof ResultadoIdRoute
 }
 export interface FileRoutesByTo {
@@ -53,6 +60,7 @@ export interface FileRoutesByTo {
   '/analise': typeof AnaliseRoute
   '/como-funciona': typeof ComoFuncionaRoute
   '/curriculos': typeof CurriculosRoute
+  '/vagas': typeof VagasRoute
   '/resultado/$id': typeof ResultadoIdRoute
 }
 export interface FileRoutesById {
@@ -61,6 +69,7 @@ export interface FileRoutesById {
   '/analise': typeof AnaliseRoute
   '/como-funciona': typeof ComoFuncionaRoute
   '/curriculos': typeof CurriculosRoute
+  '/vagas': typeof VagasRoute
   '/resultado/$id': typeof ResultadoIdRoute
 }
 export interface FileRouteTypes {
@@ -70,15 +79,23 @@ export interface FileRouteTypes {
     | '/analise'
     | '/como-funciona'
     | '/curriculos'
+    | '/vagas'
     | '/resultado/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/analise' | '/como-funciona' | '/curriculos' | '/resultado/$id'
+  to:
+    | '/'
+    | '/analise'
+    | '/como-funciona'
+    | '/curriculos'
+    | '/vagas'
+    | '/resultado/$id'
   id:
     | '__root__'
     | '/'
     | '/analise'
     | '/como-funciona'
     | '/curriculos'
+    | '/vagas'
     | '/resultado/$id'
   fileRoutesById: FileRoutesById
 }
@@ -87,11 +104,19 @@ export interface RootRouteChildren {
   AnaliseRoute: typeof AnaliseRoute
   ComoFuncionaRoute: typeof ComoFuncionaRoute
   CurriculosRoute: typeof CurriculosRoute
+  VagasRoute: typeof VagasRoute
   ResultadoIdRoute: typeof ResultadoIdRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/vagas': {
+      id: '/vagas'
+      path: '/vagas'
+      fullPath: '/vagas'
+      preLoaderRoute: typeof VagasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/curriculos': {
       id: '/curriculos'
       path: '/curriculos'
@@ -135,6 +160,7 @@ const rootRouteChildren: RootRouteChildren = {
   AnaliseRoute: AnaliseRoute,
   ComoFuncionaRoute: ComoFuncionaRoute,
   CurriculosRoute: CurriculosRoute,
+  VagasRoute: VagasRoute,
   ResultadoIdRoute: ResultadoIdRoute,
 }
 export const routeTree = rootRouteImport
