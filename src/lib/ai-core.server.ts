@@ -63,7 +63,7 @@ function mapGatewayError(error: unknown): Error | undefined {
   return undefined;
 }
 
-async function callAi<S extends z.ZodTypeAny>(
+export async function callAi<S extends z.ZodTypeAny>(
   system: string,
   prompt: string,
   schema: S,
