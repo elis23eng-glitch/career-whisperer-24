@@ -17,6 +17,7 @@ import { Route as AnaliseRouteImport } from './routes/analise'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ResultadoIdRouteImport } from './routes/resultado.$id'
 import { Route as EntrevistaNovaRouteImport } from './routes/entrevista.nova'
+import { Route as EntrevistaIdRouteImport } from './routes/entrevista.$id'
 
 const VagasRoute = VagasRouteImport.update({
   id: '/vagas',
@@ -58,6 +59,11 @@ const EntrevistaNovaRoute = EntrevistaNovaRouteImport.update({
   path: '/entrevista/nova',
   getParentRoute: () => rootRouteImport,
 } as any)
+const EntrevistaIdRoute = EntrevistaIdRouteImport.update({
+  id: '/entrevista/$id',
+  path: '/entrevista/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -66,6 +72,7 @@ export interface FileRoutesByFullPath {
   '/curriculos': typeof CurriculosRoute
   '/meu-curriculo': typeof MeuCurriculoRoute
   '/vagas': typeof VagasRoute
+  '/entrevista/$id': typeof EntrevistaIdRoute
   '/entrevista/nova': typeof EntrevistaNovaRoute
   '/resultado/$id': typeof ResultadoIdRoute
 }
@@ -76,6 +83,7 @@ export interface FileRoutesByTo {
   '/curriculos': typeof CurriculosRoute
   '/meu-curriculo': typeof MeuCurriculoRoute
   '/vagas': typeof VagasRoute
+  '/entrevista/$id': typeof EntrevistaIdRoute
   '/entrevista/nova': typeof EntrevistaNovaRoute
   '/resultado/$id': typeof ResultadoIdRoute
 }
@@ -87,6 +95,7 @@ export interface FileRoutesById {
   '/curriculos': typeof CurriculosRoute
   '/meu-curriculo': typeof MeuCurriculoRoute
   '/vagas': typeof VagasRoute
+  '/entrevista/$id': typeof EntrevistaIdRoute
   '/entrevista/nova': typeof EntrevistaNovaRoute
   '/resultado/$id': typeof ResultadoIdRoute
 }
@@ -99,6 +108,7 @@ export interface FileRouteTypes {
     | '/curriculos'
     | '/meu-curriculo'
     | '/vagas'
+    | '/entrevista/$id'
     | '/entrevista/nova'
     | '/resultado/$id'
   fileRoutesByTo: FileRoutesByTo
@@ -109,6 +119,7 @@ export interface FileRouteTypes {
     | '/curriculos'
     | '/meu-curriculo'
     | '/vagas'
+    | '/entrevista/$id'
     | '/entrevista/nova'
     | '/resultado/$id'
   id:
@@ -119,6 +130,7 @@ export interface FileRouteTypes {
     | '/curriculos'
     | '/meu-curriculo'
     | '/vagas'
+    | '/entrevista/$id'
     | '/entrevista/nova'
     | '/resultado/$id'
   fileRoutesById: FileRoutesById
@@ -130,6 +142,7 @@ export interface RootRouteChildren {
   CurriculosRoute: typeof CurriculosRoute
   MeuCurriculoRoute: typeof MeuCurriculoRoute
   VagasRoute: typeof VagasRoute
+  EntrevistaIdRoute: typeof EntrevistaIdRoute
   EntrevistaNovaRoute: typeof EntrevistaNovaRoute
   ResultadoIdRoute: typeof ResultadoIdRoute
 }
@@ -192,6 +205,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EntrevistaNovaRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/entrevista/$id': {
+      id: '/entrevista/$id'
+      path: '/entrevista/$id'
+      fullPath: '/entrevista/$id'
+      preLoaderRoute: typeof EntrevistaIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -202,6 +222,7 @@ const rootRouteChildren: RootRouteChildren = {
   CurriculosRoute: CurriculosRoute,
   MeuCurriculoRoute: MeuCurriculoRoute,
   VagasRoute: VagasRoute,
+  EntrevistaIdRoute: EntrevistaIdRoute,
   EntrevistaNovaRoute: EntrevistaNovaRoute,
   ResultadoIdRoute: ResultadoIdRoute,
 }
