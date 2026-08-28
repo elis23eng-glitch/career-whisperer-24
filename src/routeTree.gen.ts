@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as VagasRouteImport } from './routes/vagas'
+import { Route as MeuCurriculoRouteImport } from './routes/meu-curriculo'
 import { Route as CurriculosRouteImport } from './routes/curriculos'
 import { Route as ComoFuncionaRouteImport } from './routes/como-funciona'
 import { Route as AnaliseRouteImport } from './routes/analise'
@@ -19,6 +20,11 @@ import { Route as ResultadoIdRouteImport } from './routes/resultado.$id'
 const VagasRoute = VagasRouteImport.update({
   id: '/vagas',
   path: '/vagas',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MeuCurriculoRoute = MeuCurriculoRouteImport.update({
+  id: '/meu-curriculo',
+  path: '/meu-curriculo',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CurriculosRoute = CurriculosRouteImport.update({
@@ -52,6 +58,7 @@ export interface FileRoutesByFullPath {
   '/analise': typeof AnaliseRoute
   '/como-funciona': typeof ComoFuncionaRoute
   '/curriculos': typeof CurriculosRoute
+  '/meu-curriculo': typeof MeuCurriculoRoute
   '/vagas': typeof VagasRoute
   '/resultado/$id': typeof ResultadoIdRoute
 }
@@ -60,6 +67,7 @@ export interface FileRoutesByTo {
   '/analise': typeof AnaliseRoute
   '/como-funciona': typeof ComoFuncionaRoute
   '/curriculos': typeof CurriculosRoute
+  '/meu-curriculo': typeof MeuCurriculoRoute
   '/vagas': typeof VagasRoute
   '/resultado/$id': typeof ResultadoIdRoute
 }
@@ -69,6 +77,7 @@ export interface FileRoutesById {
   '/analise': typeof AnaliseRoute
   '/como-funciona': typeof ComoFuncionaRoute
   '/curriculos': typeof CurriculosRoute
+  '/meu-curriculo': typeof MeuCurriculoRoute
   '/vagas': typeof VagasRoute
   '/resultado/$id': typeof ResultadoIdRoute
 }
@@ -79,6 +88,7 @@ export interface FileRouteTypes {
     | '/analise'
     | '/como-funciona'
     | '/curriculos'
+    | '/meu-curriculo'
     | '/vagas'
     | '/resultado/$id'
   fileRoutesByTo: FileRoutesByTo
@@ -87,6 +97,7 @@ export interface FileRouteTypes {
     | '/analise'
     | '/como-funciona'
     | '/curriculos'
+    | '/meu-curriculo'
     | '/vagas'
     | '/resultado/$id'
   id:
@@ -95,6 +106,7 @@ export interface FileRouteTypes {
     | '/analise'
     | '/como-funciona'
     | '/curriculos'
+    | '/meu-curriculo'
     | '/vagas'
     | '/resultado/$id'
   fileRoutesById: FileRoutesById
@@ -104,6 +116,7 @@ export interface RootRouteChildren {
   AnaliseRoute: typeof AnaliseRoute
   ComoFuncionaRoute: typeof ComoFuncionaRoute
   CurriculosRoute: typeof CurriculosRoute
+  MeuCurriculoRoute: typeof MeuCurriculoRoute
   VagasRoute: typeof VagasRoute
   ResultadoIdRoute: typeof ResultadoIdRoute
 }
@@ -115,6 +128,13 @@ declare module '@tanstack/react-router' {
       path: '/vagas'
       fullPath: '/vagas'
       preLoaderRoute: typeof VagasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/meu-curriculo': {
+      id: '/meu-curriculo'
+      path: '/meu-curriculo'
+      fullPath: '/meu-curriculo'
+      preLoaderRoute: typeof MeuCurriculoRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/curriculos': {
@@ -160,6 +180,7 @@ const rootRouteChildren: RootRouteChildren = {
   AnaliseRoute: AnaliseRoute,
   ComoFuncionaRoute: ComoFuncionaRoute,
   CurriculosRoute: CurriculosRoute,
+  MeuCurriculoRoute: MeuCurriculoRoute,
   VagasRoute: VagasRoute,
   ResultadoIdRoute: ResultadoIdRoute,
 }
