@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as VagasRouteImport } from './routes/vagas'
+import { Route as PainelRouteImport } from './routes/painel'
 import { Route as MeuCurriculoRouteImport } from './routes/meu-curriculo'
 import { Route as EvolucaoRouteImport } from './routes/evolucao'
 import { Route as CurriculosRouteImport } from './routes/curriculos'
@@ -24,6 +25,11 @@ import { Route as EntrevistaIdRelatorioRouteImport } from './routes/entrevista.$
 const VagasRoute = VagasRouteImport.update({
   id: '/vagas',
   path: '/vagas',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PainelRoute = PainelRouteImport.update({
+  id: '/painel',
+  path: '/painel',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MeuCurriculoRoute = MeuCurriculoRouteImport.update({
@@ -84,6 +90,7 @@ export interface FileRoutesByFullPath {
   '/curriculos': typeof CurriculosRoute
   '/evolucao': typeof EvolucaoRoute
   '/meu-curriculo': typeof MeuCurriculoRoute
+  '/painel': typeof PainelRoute
   '/vagas': typeof VagasRoute
   '/entrevista/$id': typeof EntrevistaIdRouteWithChildren
   '/entrevista/nova': typeof EntrevistaNovaRoute
@@ -97,6 +104,7 @@ export interface FileRoutesByTo {
   '/curriculos': typeof CurriculosRoute
   '/evolucao': typeof EvolucaoRoute
   '/meu-curriculo': typeof MeuCurriculoRoute
+  '/painel': typeof PainelRoute
   '/vagas': typeof VagasRoute
   '/entrevista/$id': typeof EntrevistaIdRouteWithChildren
   '/entrevista/nova': typeof EntrevistaNovaRoute
@@ -111,6 +119,7 @@ export interface FileRoutesById {
   '/curriculos': typeof CurriculosRoute
   '/evolucao': typeof EvolucaoRoute
   '/meu-curriculo': typeof MeuCurriculoRoute
+  '/painel': typeof PainelRoute
   '/vagas': typeof VagasRoute
   '/entrevista/$id': typeof EntrevistaIdRouteWithChildren
   '/entrevista/nova': typeof EntrevistaNovaRoute
@@ -126,6 +135,7 @@ export interface FileRouteTypes {
     | '/curriculos'
     | '/evolucao'
     | '/meu-curriculo'
+    | '/painel'
     | '/vagas'
     | '/entrevista/$id'
     | '/entrevista/nova'
@@ -139,6 +149,7 @@ export interface FileRouteTypes {
     | '/curriculos'
     | '/evolucao'
     | '/meu-curriculo'
+    | '/painel'
     | '/vagas'
     | '/entrevista/$id'
     | '/entrevista/nova'
@@ -152,6 +163,7 @@ export interface FileRouteTypes {
     | '/curriculos'
     | '/evolucao'
     | '/meu-curriculo'
+    | '/painel'
     | '/vagas'
     | '/entrevista/$id'
     | '/entrevista/nova'
@@ -166,6 +178,7 @@ export interface RootRouteChildren {
   CurriculosRoute: typeof CurriculosRoute
   EvolucaoRoute: typeof EvolucaoRoute
   MeuCurriculoRoute: typeof MeuCurriculoRoute
+  PainelRoute: typeof PainelRoute
   VagasRoute: typeof VagasRoute
   EntrevistaIdRoute: typeof EntrevistaIdRouteWithChildren
   EntrevistaNovaRoute: typeof EntrevistaNovaRoute
@@ -179,6 +192,13 @@ declare module '@tanstack/react-router' {
       path: '/vagas'
       fullPath: '/vagas'
       preLoaderRoute: typeof VagasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/painel': {
+      id: '/painel'
+      path: '/painel'
+      fullPath: '/painel'
+      preLoaderRoute: typeof PainelRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/meu-curriculo': {
@@ -273,6 +293,7 @@ const rootRouteChildren: RootRouteChildren = {
   CurriculosRoute: CurriculosRoute,
   EvolucaoRoute: EvolucaoRoute,
   MeuCurriculoRoute: MeuCurriculoRoute,
+  PainelRoute: PainelRoute,
   VagasRoute: VagasRoute,
   EntrevistaIdRoute: EntrevistaIdRouteWithChildren,
   EntrevistaNovaRoute: EntrevistaNovaRoute,
