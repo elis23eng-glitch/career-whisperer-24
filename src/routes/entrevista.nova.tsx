@@ -38,14 +38,22 @@ import {
   type SavedResume,
 } from "@/lib/interview/schemas";
 
+interface InterviewSearch {
+  vaga?: string;
+  curriculo?: string;
+  fracas?: boolean;
+  tipo?: string;
+}
+
 export const Route = createFileRoute("/entrevista/nova")({
-  validateSearch: (search: Record<string, unknown>) => ({
-    vaga: typeof search["vaga"] === "string" ? (search["vaga"] as string) : undefined,
-    curriculo:
-      typeof search["curriculo"] === "string" ? (search["curriculo"] as string) : undefined,
-    fracas: search["fracas"] === true || search["fracas"] === "true" ? true : undefined,
-    tipo: typeof search["tipo"] === "string" ? (search["tipo"] as string) : undefined,
-  }),
+  validateSearch: (search: Record<string, unknown>): InterviewSearch => {
+    const out: InterviewSearch = {};
+    if (typeof search["vaga"] === "string") out.vaga = search["vaga"];
+    if (typeof search["curriculo"] === "string") out.curriculo = search["curriculo"];
+    if (search["fracas"] === true || search["fracas"] === "true") out.fracas = true;
+    if (typeof search["tipo"] === "string") out.tipo = search["tipo"];
+    return out;
+  },
   head: () => ({
     meta: [
       { title: "Preparar entrevista simulada | MatchCV Recruiter" },

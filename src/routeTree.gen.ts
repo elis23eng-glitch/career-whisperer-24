@@ -10,7 +10,9 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as VagasRouteImport } from './routes/vagas'
+import { Route as PainelRouteImport } from './routes/painel'
 import { Route as MeuCurriculoRouteImport } from './routes/meu-curriculo'
+import { Route as EvolucaoRouteImport } from './routes/evolucao'
 import { Route as CurriculosRouteImport } from './routes/curriculos'
 import { Route as ComoFuncionaRouteImport } from './routes/como-funciona'
 import { Route as AnaliseRouteImport } from './routes/analise'
@@ -18,15 +20,26 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as ResultadoIdRouteImport } from './routes/resultado.$id'
 import { Route as EntrevistaNovaRouteImport } from './routes/entrevista.nova'
 import { Route as EntrevistaIdRouteImport } from './routes/entrevista.$id'
+import { Route as EntrevistaIdRelatorioRouteImport } from './routes/entrevista.$id.relatorio'
 
 const VagasRoute = VagasRouteImport.update({
   id: '/vagas',
   path: '/vagas',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PainelRoute = PainelRouteImport.update({
+  id: '/painel',
+  path: '/painel',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const MeuCurriculoRoute = MeuCurriculoRouteImport.update({
   id: '/meu-curriculo',
   path: '/meu-curriculo',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EvolucaoRoute = EvolucaoRouteImport.update({
+  id: '/evolucao',
+  path: '/evolucao',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CurriculosRoute = CurriculosRouteImport.update({
@@ -64,28 +77,39 @@ const EntrevistaIdRoute = EntrevistaIdRouteImport.update({
   path: '/entrevista/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const EntrevistaIdRelatorioRoute = EntrevistaIdRelatorioRouteImport.update({
+  id: '/relatorio',
+  path: '/relatorio',
+  getParentRoute: () => EntrevistaIdRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/analise': typeof AnaliseRoute
   '/como-funciona': typeof ComoFuncionaRoute
   '/curriculos': typeof CurriculosRoute
+  '/evolucao': typeof EvolucaoRoute
   '/meu-curriculo': typeof MeuCurriculoRoute
+  '/painel': typeof PainelRoute
   '/vagas': typeof VagasRoute
-  '/entrevista/$id': typeof EntrevistaIdRoute
+  '/entrevista/$id': typeof EntrevistaIdRouteWithChildren
   '/entrevista/nova': typeof EntrevistaNovaRoute
   '/resultado/$id': typeof ResultadoIdRoute
+  '/entrevista/$id/relatorio': typeof EntrevistaIdRelatorioRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/analise': typeof AnaliseRoute
   '/como-funciona': typeof ComoFuncionaRoute
   '/curriculos': typeof CurriculosRoute
+  '/evolucao': typeof EvolucaoRoute
   '/meu-curriculo': typeof MeuCurriculoRoute
+  '/painel': typeof PainelRoute
   '/vagas': typeof VagasRoute
-  '/entrevista/$id': typeof EntrevistaIdRoute
+  '/entrevista/$id': typeof EntrevistaIdRouteWithChildren
   '/entrevista/nova': typeof EntrevistaNovaRoute
   '/resultado/$id': typeof ResultadoIdRoute
+  '/entrevista/$id/relatorio': typeof EntrevistaIdRelatorioRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -93,11 +117,14 @@ export interface FileRoutesById {
   '/analise': typeof AnaliseRoute
   '/como-funciona': typeof ComoFuncionaRoute
   '/curriculos': typeof CurriculosRoute
+  '/evolucao': typeof EvolucaoRoute
   '/meu-curriculo': typeof MeuCurriculoRoute
+  '/painel': typeof PainelRoute
   '/vagas': typeof VagasRoute
-  '/entrevista/$id': typeof EntrevistaIdRoute
+  '/entrevista/$id': typeof EntrevistaIdRouteWithChildren
   '/entrevista/nova': typeof EntrevistaNovaRoute
   '/resultado/$id': typeof ResultadoIdRoute
+  '/entrevista/$id/relatorio': typeof EntrevistaIdRelatorioRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -106,33 +133,42 @@ export interface FileRouteTypes {
     | '/analise'
     | '/como-funciona'
     | '/curriculos'
+    | '/evolucao'
     | '/meu-curriculo'
+    | '/painel'
     | '/vagas'
     | '/entrevista/$id'
     | '/entrevista/nova'
     | '/resultado/$id'
+    | '/entrevista/$id/relatorio'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/analise'
     | '/como-funciona'
     | '/curriculos'
+    | '/evolucao'
     | '/meu-curriculo'
+    | '/painel'
     | '/vagas'
     | '/entrevista/$id'
     | '/entrevista/nova'
     | '/resultado/$id'
+    | '/entrevista/$id/relatorio'
   id:
     | '__root__'
     | '/'
     | '/analise'
     | '/como-funciona'
     | '/curriculos'
+    | '/evolucao'
     | '/meu-curriculo'
+    | '/painel'
     | '/vagas'
     | '/entrevista/$id'
     | '/entrevista/nova'
     | '/resultado/$id'
+    | '/entrevista/$id/relatorio'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -140,9 +176,11 @@ export interface RootRouteChildren {
   AnaliseRoute: typeof AnaliseRoute
   ComoFuncionaRoute: typeof ComoFuncionaRoute
   CurriculosRoute: typeof CurriculosRoute
+  EvolucaoRoute: typeof EvolucaoRoute
   MeuCurriculoRoute: typeof MeuCurriculoRoute
+  PainelRoute: typeof PainelRoute
   VagasRoute: typeof VagasRoute
-  EntrevistaIdRoute: typeof EntrevistaIdRoute
+  EntrevistaIdRoute: typeof EntrevistaIdRouteWithChildren
   EntrevistaNovaRoute: typeof EntrevistaNovaRoute
   ResultadoIdRoute: typeof ResultadoIdRoute
 }
@@ -156,11 +194,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof VagasRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/painel': {
+      id: '/painel'
+      path: '/painel'
+      fullPath: '/painel'
+      preLoaderRoute: typeof PainelRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/meu-curriculo': {
       id: '/meu-curriculo'
       path: '/meu-curriculo'
       fullPath: '/meu-curriculo'
       preLoaderRoute: typeof MeuCurriculoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/evolucao': {
+      id: '/evolucao'
+      path: '/evolucao'
+      fullPath: '/evolucao'
+      preLoaderRoute: typeof EvolucaoRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/curriculos': {
@@ -212,17 +264,38 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EntrevistaIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/entrevista/$id/relatorio': {
+      id: '/entrevista/$id/relatorio'
+      path: '/relatorio'
+      fullPath: '/entrevista/$id/relatorio'
+      preLoaderRoute: typeof EntrevistaIdRelatorioRouteImport
+      parentRoute: typeof EntrevistaIdRoute
+    }
   }
 }
+
+interface EntrevistaIdRouteChildren {
+  EntrevistaIdRelatorioRoute: typeof EntrevistaIdRelatorioRoute
+}
+
+const EntrevistaIdRouteChildren: EntrevistaIdRouteChildren = {
+  EntrevistaIdRelatorioRoute: EntrevistaIdRelatorioRoute,
+}
+
+const EntrevistaIdRouteWithChildren = EntrevistaIdRoute._addFileChildren(
+  EntrevistaIdRouteChildren,
+)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AnaliseRoute: AnaliseRoute,
   ComoFuncionaRoute: ComoFuncionaRoute,
   CurriculosRoute: CurriculosRoute,
+  EvolucaoRoute: EvolucaoRoute,
   MeuCurriculoRoute: MeuCurriculoRoute,
+  PainelRoute: PainelRoute,
   VagasRoute: VagasRoute,
-  EntrevistaIdRoute: EntrevistaIdRoute,
+  EntrevistaIdRoute: EntrevistaIdRouteWithChildren,
   EntrevistaNovaRoute: EntrevistaNovaRoute,
   ResultadoIdRoute: ResultadoIdRoute,
 }
