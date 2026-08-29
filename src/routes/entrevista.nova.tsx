@@ -38,6 +38,13 @@ import {
   type SavedResume,
 } from "@/lib/interview/schemas";
 
+interface InterviewSearch {
+  vaga?: string;
+  curriculo?: string;
+  fracas?: boolean;
+  tipo?: string;
+}
+
 export const Route = createFileRoute("/entrevista/nova")({
   validateSearch: (search: Record<string, unknown>): InterviewSearch => {
     const out: InterviewSearch = {};
