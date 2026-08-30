@@ -19,8 +19,12 @@ import { getTheme, setTheme, wipeAllData } from "@/lib/storage";
 import { PrivacyDialog } from "@/components/PrivacyDialog";
 
 const NAV = [
-  { to: "/analise", label: "Nova análise" },
-  { to: "/curriculos", label: "Meus currículos" },
+  { to: "/painel", label: "Painel" },
+  { to: "/meu-curriculo", label: "Meu currículo" },
+  { to: "/vagas", label: "Minhas vagas" },
+  { to: "/analise", label: "Análise" },
+  { to: "/entrevista/nova", label: "Entrevista" },
+  { to: "/evolucao", label: "Minha evolução" },
   { to: "/como-funciona", label: "Como funciona" },
 ] as const;
 

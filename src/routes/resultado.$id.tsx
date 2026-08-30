@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowLeft, Printer } from "lucide-react";
+import { ArrowLeft, MessageSquare, Printer } from "lucide-react";
 import { toast } from "sonner";
 
 import { Badge } from "@/components/ui/badge";
@@ -14,6 +14,7 @@ import { KeywordsTab } from "@/components/result/KeywordsTab";
 import { GapsTab, RecommendationsTab } from "@/components/result/InsightsTabs";
 import { AtsResumeTab } from "@/components/result/AtsResumeTab";
 import { getAnalysis, saveAnalysis } from "@/lib/storage";
+import { listJobs, syncFromAnalyses } from "@/lib/interview/store";
 import type { AnalysisRecord, ConfirmedExperience } from "@/lib/types";
 
 export const Route = createFileRoute("/resultado/$id")({
@@ -53,9 +54,13 @@ function ResultPage() {
   const [loaded, setLoaded] = useState(false);
   const [applied, setApplied] = useState<Record<number, "aplicada" | "ignorada">>({});
 
+  const [interviewJobId, setInterviewJobId] = useState<string | undefined>(undefined);
+
   useEffect(() => {
     setRecord(getAnalysis(id) ?? null);
     setLoaded(true);
+    syncFromAnalyses();
+    setInterviewJobId(listJobs().find((j) => j.analysisId === id)?.id);
   }, [id]);
 
   const update = (next: AnalysisRecord) => {
@@ -104,17 +109,28 @@ function ResultPage() {
             Meus currículos
           </Link>
         </Button>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => {
-            window.print();
-            toast.info("Use “Salvar como PDF” na janela de impressão, se preferir.");
-          }}
-        >
-          <Printer className="size-4" aria-hidden="true" />
-          Imprimir
-        </Button>
+        <div className="flex flex-wrap gap-2">
+          <Button asChild size="sm">
+            <Link
+              to="/entrevista/nova"
+              search={interviewJobId ? { vaga: interviewJobId } : {}}
+            >
+              <MessageSquare className="size-4" aria-hidden="true" />
+              Treinar entrevista para esta vaga
+            </Link>
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => {
+              window.print();
+              toast.info("Use “Salvar como PDF” na janela de impressão, se preferir.");
+            }}
+          >
+            <Printer className="size-4" aria-hidden="true" />
+            Imprimir
+          </Button>
+        </div>
       </div>
 
       <Card className="shadow-card">

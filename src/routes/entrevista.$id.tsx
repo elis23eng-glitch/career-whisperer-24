@@ -367,7 +367,7 @@ function InterviewRoom() {
         </p>
         <div className="mt-6 flex flex-wrap justify-center gap-2">
           <Button asChild>
-            <Link to="/entrevista/nova">Iniciar nova entrevista</Link>
+            <Link to="/entrevista/nova" search={{}}>Iniciar nova entrevista</Link>
           </Button>
           <Button asChild variant="outline">
             <Link to="/evolucao">Minha evolução</Link>
@@ -389,7 +389,7 @@ function InterviewRoom() {
             </Link>
           </Button>
           <Button asChild variant="outline">
-            <Link to="/entrevista/nova">Nova simulação</Link>
+            <Link to="/entrevista/nova" search={{}}>Nova simulação</Link>
           </Button>
         </div>
       </div>
