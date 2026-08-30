@@ -104,17 +104,25 @@ function ResultPage() {
             Meus currículos
           </Link>
         </Button>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => {
-            window.print();
-            toast.info("Use “Salvar como PDF” na janela de impressão, se preferir.");
-          }}
-        >
-          <Printer className="size-4" aria-hidden="true" />
-          Imprimir
-        </Button>
+        <div className="flex flex-wrap gap-2">
+          <Button asChild size="sm">
+            <Link to="/entrevista/nova" search={{}}>
+              <MessageSquare className="size-4" aria-hidden="true" />
+              Treinar entrevista para esta vaga
+            </Link>
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => {
+              window.print();
+              toast.info("Use “Salvar como PDF” na janela de impressão, se preferir.");
+            }}
+          >
+            <Printer className="size-4" aria-hidden="true" />
+            Imprimir
+          </Button>
+        </div>
       </div>
 
       <Card className="shadow-card">
