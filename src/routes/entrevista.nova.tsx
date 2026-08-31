@@ -416,17 +416,117 @@ function NewInterviewPage() {
 
             <div className="grid gap-2">
               <Label>Modo de resposta</Label>
-              <div className="flex flex-wrap items-center gap-3">
-                <Badge variant="secondary" className="px-3 py-2 text-sm">
-                  Texto
-                </Badge>
-                <span className="text-sm text-muted-foreground">
-                  Resposta por voz e gravação: em breve.
-                </span>
-              </div>
+              <RadioGroup
+                value={answerMode}
+                onValueChange={(v) => setAnswerMode(v as AnswerMode)}
+                className="grid gap-3"
+              >
+                {(["hibrido", "voz", "texto"] as AnswerMode[]).map((m) => (
+                  <Label
+                    key={m}
+                    htmlFor={`modo-${m}`}
+                    className="flex cursor-pointer items-start gap-3 rounded-lg border p-4 has-[:checked]:border-primary has-[:checked]:bg-accent"
+                  >
+                    <RadioGroupItem id={`modo-${m}`} value={m} className="mt-1" />
+                    <span>
+                      <span className="flex flex-wrap items-center gap-2 text-base font-semibold">
+                        {ANSWER_MODE_LABELS[m]}
+                        {m === "hibrido" ? <Badge>Padrão</Badge> : null}
+                      </span>
+                      <span className="mt-1 block text-sm font-normal text-muted-foreground">
+                        {m === "texto"
+                          ? "Você escreve todas as respostas."
+                          : m === "voz"
+                            ? "O recrutador fala as perguntas e você responde falando."
+                            : "O recrutador fala as perguntas e você escolhe falar ou digitar em cada resposta."}
+                      </span>
+                    </span>
+                  </Label>
+                ))}
+              </RadioGroup>
+              {!voiceSupported ? (
+                <Alert className="border-warning">
+                  <Info className="size-4" aria-hidden="true" />
+                  <AlertTitle>Voz indisponível neste navegador</AlertTitle>
+                  <AlertDescription>
+                    O recurso de voz não está disponível neste navegador. Você pode continuar a
+                    entrevista digitando suas respostas.
+                  </AlertDescription>
+                </Alert>
+              ) : null}
+            </div>
+
+            <div className="grid gap-2">
+              <Label>Idioma da entrevista</Label>
+              <RadioGroup
+                value={language}
+                onValueChange={(v) => setLanguage(v as InterviewLanguage)}
+                className="flex flex-wrap gap-3"
+              >
+                {(["pt-BR", "en-US"] as InterviewLanguage[]).map((l) => (
+                  <Label
+                    key={l}
+                    htmlFor={`idioma-${l}`}
+                    className="flex cursor-pointer items-center gap-2 rounded-lg border px-4 py-3 text-base has-[:checked]:border-primary has-[:checked]:bg-accent"
+                  >
+                    <RadioGroupItem id={`idioma-${l}`} value={l} />
+                    {LANGUAGE_LABELS[l]}
+                  </Label>
+                ))}
+              </RadioGroup>
             </div>
           </CardContent>
         </Card>
+
+        {answerMode !== "texto" && voiceSupported ? (
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-xl">4. Preparar o áudio</CardTitle>
+              <CardDescription>
+                Faça a entrevista em um local silencioso. A transcrição da sua fala aparece na tela e
+                pode ser corrigida antes de enviar.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="grid gap-4">
+              <div className="flex flex-wrap items-center gap-3">
+                <Button
+                  type="button"
+                  size="lg"
+                  variant="outline"
+                  onClick={() => void testMic()}
+                  disabled={testingMic}
+                >
+                  {testingMic ? (
+                    <Loader2 className="size-4 animate-spin" aria-hidden="true" />
+                  ) : (
+                    <Mic className="size-4" aria-hidden="true" />
+                  )}
+                  Testar microfone
+                </Button>
+                <Button type="button" size="lg" variant="outline" onClick={previewVoice}>
+                  <Volume2 className="size-4" aria-hidden="true" />
+                  {speaking ? "Reproduzindo…" : "Ouvir voz do recrutador"}
+                </Button>
+                <Badge
+                  variant={micPermission === "permitida" ? "default" : "secondary"}
+                  className="px-3 py-2 text-sm"
+                >
+                  {micPermission === "permitida"
+                    ? "Microfone autorizado"
+                    : micPermission === "negada"
+                      ? "Microfone não autorizado"
+                      : micPermission === "indisponivel"
+                        ? "Microfone indisponível"
+                        : "Permissão ainda não solicitada"}
+                </Badge>
+              </div>
+              <p className="text-sm text-muted-foreground">
+                O áudio é utilizado somente para gerar a transcrição. Por padrão, a gravação não é
+                armazenada.
+              </p>
+            </CardContent>
+          </Card>
+        ) : null}
 
         <Card className="border-primary/40 bg-accent/40">
           <CardHeader>
@@ -449,8 +549,13 @@ function NewInterviewPage() {
               <strong>Feedback:</strong>{" "}
               {feedbackMode === "imediato" ? "após cada resposta" : "somente no final"}
             </p>
+            <p>
+              <strong>Modo:</strong> {ANSWER_MODE_LABELS[voiceSupported ? answerMode : "texto"]} •{" "}
+              <strong>Idioma:</strong> {LANGUAGE_LABELS[language]}
+            </p>
           </CardContent>
         </Card>
+
 
         <Button size="lg" className="h-14 text-base" onClick={begin} disabled={starting || !job || !resume}>
           {starting ? (
