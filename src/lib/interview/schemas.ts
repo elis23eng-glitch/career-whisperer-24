@@ -133,6 +133,11 @@ export const evaluationSchema = z.object({
     .default({ situacao: "", tarefa: "", acao: "", resultado: "" }),
   needsFollowUp: z.boolean().default(false),
   followUpQuestion: z.string().default(""),
+  /** Resumo curto do feedback, pensado para ser ouvido em áudio. */
+  spokenSummary: z.string().default(""),
+  /** Observações de idioma (entrevista em inglês): só o que atrapalha o entendimento. */
+  languageNotes: z.array(z.string()).default([]),
+
 });
 export type AnswerEvaluation = z.infer<typeof evaluationSchema>;
 
