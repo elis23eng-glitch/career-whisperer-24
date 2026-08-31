@@ -230,6 +230,7 @@ export const evaluateInput = contextInput.extend({
   question: z.string().min(1),
   answer: z.string().min(1),
   starSuggested: z.boolean().default(false),
+  source: z.enum(["voz", "texto"]).default("texto"),
 });
 
 export const reportInput = contextInput.extend({
@@ -240,7 +241,11 @@ export const reportInput = contextInput.extend({
         answer: z.string().default(""),
         overall: z.number().optional(),
         criteria: z.array(z.object({ name: z.string(), score: z.number() })).default([]),
+        source: z.enum(["voz", "texto"]).default("texto"),
+        durationSec: z.number().optional(),
+        repeats: z.number().optional(),
       }),
+
     )
     .default([]),
   previousSummaries: z
