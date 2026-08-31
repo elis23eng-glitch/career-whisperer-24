@@ -11,12 +11,19 @@ export type Difficulty = z.infer<typeof difficultySchema>;
 export const feedbackModeSchema = z.enum(["imediato", "final"]);
 export type FeedbackMode = z.infer<typeof feedbackModeSchema>;
 
+export const answerModeSchema = z.enum(["texto", "voz", "hibrido"]);
+export type AnswerMode = z.infer<typeof answerModeSchema>;
+
+export const languageSchema = z.enum(["pt-BR", "en-US"]);
+export type InterviewLanguage = z.infer<typeof languageSchema>;
+
 export const interviewConfigSchema = z.object({
   type: interviewTypeSchema.default("completa"),
   difficulty: difficultySchema.default("intermediario"),
   questionCount: z.union([z.literal(5), z.literal(10), z.literal(15)]).default(5),
   feedbackMode: feedbackModeSchema.default("imediato"),
-  answerMode: z.literal("texto").default("texto"),
+  answerMode: answerModeSchema.default("hibrido"),
+  language: languageSchema.default("pt-BR"),
 });
 export type InterviewConfig = z.infer<typeof interviewConfigSchema>;
 
@@ -28,11 +35,23 @@ export const INTERVIEW_TYPE_LABELS: Record<InterviewType, string> = {
   completa: "Entrevista completa",
 };
 
+export const ANSWER_MODE_LABELS: Record<AnswerMode, string> = {
+  texto: "Entrevista por texto",
+  voz: "Entrevista por voz",
+  hibrido: "Modo híbrido — fale ou digite sua resposta",
+};
+
+export const LANGUAGE_LABELS: Record<InterviewLanguage, string> = {
+  "pt-BR": "Português do Brasil",
+  "en-US": "Inglês",
+};
+
 export const DIFFICULTY_LABELS: Record<Difficulty, string> = {
   iniciante: "Iniciante",
   intermediario: "Intermediário",
   avancado: "Avançado",
 };
+
 
 /* --------------------------------- Vaga ---------------------------------- */
 
