@@ -159,7 +159,7 @@ export interface InterviewTurn {
   evaluation?: AnswerEvaluation;
   attempts: number;
   /** Origem da resposta confirmada. */
-  source?: AnswerMode extends never ? never : "voz" | "texto";
+  source?: "voz" | "texto";
   /** Idioma usado nesta resposta. */
   language?: InterviewLanguage;
   /** Duração aproximada da resposta, em segundos. Sem áudio armazenado. */
