@@ -11,12 +11,19 @@ export type Difficulty = z.infer<typeof difficultySchema>;
 export const feedbackModeSchema = z.enum(["imediato", "final"]);
 export type FeedbackMode = z.infer<typeof feedbackModeSchema>;
 
+export const answerModeSchema = z.enum(["texto", "voz", "hibrido"]);
+export type AnswerMode = z.infer<typeof answerModeSchema>;
+
+export const languageSchema = z.enum(["pt-BR", "en-US"]);
+export type InterviewLanguage = z.infer<typeof languageSchema>;
+
 export const interviewConfigSchema = z.object({
   type: interviewTypeSchema.default("completa"),
   difficulty: difficultySchema.default("intermediario"),
   questionCount: z.union([z.literal(5), z.literal(10), z.literal(15)]).default(5),
   feedbackMode: feedbackModeSchema.default("imediato"),
-  answerMode: z.literal("texto").default("texto"),
+  answerMode: answerModeSchema.default("hibrido"),
+  language: languageSchema.default("pt-BR"),
 });
 export type InterviewConfig = z.infer<typeof interviewConfigSchema>;
 
@@ -28,11 +35,23 @@ export const INTERVIEW_TYPE_LABELS: Record<InterviewType, string> = {
   completa: "Entrevista completa",
 };
 
+export const ANSWER_MODE_LABELS: Record<AnswerMode, string> = {
+  texto: "Entrevista por texto",
+  voz: "Entrevista por voz",
+  hibrido: "Modo híbrido — fale ou digite sua resposta",
+};
+
+export const LANGUAGE_LABELS: Record<InterviewLanguage, string> = {
+  "pt-BR": "Português do Brasil",
+  "en-US": "Inglês",
+};
+
 export const DIFFICULTY_LABELS: Record<Difficulty, string> = {
   iniciante: "Iniciante",
   intermediario: "Intermediário",
   avancado: "Avançado",
 };
+
 
 /* --------------------------------- Vaga ---------------------------------- */
 
@@ -70,7 +89,16 @@ export const questionSchema = z.object({
   why: z.string().default(""),
   starSuggested: z.boolean().default(false),
   isFollowUp: z.boolean().default(false),
+  /** Tradução para português — mostrada só quando o usuário pedir (entrevista em inglês). */
+  translation: z.string().default(""),
+  /** Ajuda de vocabulário para a entrevista em inglês. */
+  vocabulary: z
+    .array(z.object({ term: z.string(), meaning: z.string().default("") }))
+    .default([]),
+  /** Fala curta do recrutador, para leitura em voz alta. */
+  spoken: z.string().default(""),
 });
+
 export type InterviewQuestion = z.infer<typeof questionSchema>;
 
 export const openingSchema = z.object({
@@ -105,6 +133,11 @@ export const evaluationSchema = z.object({
     .default({ situacao: "", tarefa: "", acao: "", resultado: "" }),
   needsFollowUp: z.boolean().default(false),
   followUpQuestion: z.string().default(""),
+  /** Resumo curto do feedback, pensado para ser ouvido em áudio. */
+  spokenSummary: z.string().default(""),
+  /** Observações de idioma (entrevista em inglês): só o que atrapalha o entendimento. */
+  languageNotes: z.array(z.string()).default([]),
+
 });
 export type AnswerEvaluation = z.infer<typeof evaluationSchema>;
 
@@ -134,11 +167,21 @@ export type InterviewReport = z.infer<typeof reportSchema>;
 export interface InterviewTurn {
   index: number;
   question: InterviewQuestion;
+  /** Texto confirmado pelo usuário — nunca substituído por texto criado pela IA. */
   answer: string;
   answeredAt?: string;
   evaluation?: AnswerEvaluation;
   attempts: number;
+  /** Origem da resposta confirmada. */
+  source?: "voz" | "texto";
+  /** Idioma usado nesta resposta. */
+  language?: InterviewLanguage;
+  /** Duração aproximada da resposta, em segundos. Sem áudio armazenado. */
+  durationSec?: number;
+  /** Quantas vezes o candidato pediu para repetir a pergunta. */
+  repeats?: number;
 }
+
 
 export interface InterviewSession {
   id: string;
@@ -187,6 +230,7 @@ export const evaluateInput = contextInput.extend({
   question: z.string().min(1),
   answer: z.string().min(1),
   starSuggested: z.boolean().default(false),
+  source: z.enum(["voz", "texto"]).default("texto"),
 });
 
 export const reportInput = contextInput.extend({
@@ -197,7 +241,11 @@ export const reportInput = contextInput.extend({
         answer: z.string().default(""),
         overall: z.number().optional(),
         criteria: z.array(z.object({ name: z.string(), score: z.number() })).default([]),
+        source: z.enum(["voz", "texto"]).default("texto"),
+        durationSec: z.number().optional(),
+        repeats: z.number().optional(),
       }),
+
     )
     .default([]),
   previousSummaries: z

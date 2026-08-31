@@ -27,11 +27,21 @@ import {
 } from "@/lib/interview/store";
 import { startInterview } from "@/lib/interview/interview.functions";
 import {
+  isRecognitionSupported,
+  requestMicPermission,
+  type MicPermission,
+} from "@/lib/voice/recognition";
+import { speak, stopSpeaking, warmUpVoices } from "@/lib/voice/speech";
+import {
+  ANSWER_MODE_LABELS,
   DIFFICULTY_LABELS,
   INTERVIEW_TYPE_LABELS,
+  LANGUAGE_LABELS,
+  type AnswerMode,
   type Difficulty,
   type FeedbackMode,
   type InterviewConfig,
+  type InterviewLanguage,
   type InterviewSession,
   type InterviewType,
   type SavedJob,
@@ -43,6 +53,8 @@ interface InterviewSearch {
   curriculo?: string;
   fracas?: boolean;
   tipo?: string;
+  modo?: string;
+  idioma?: string;
 }
 
 export const Route = createFileRoute("/entrevista/nova")({
@@ -52,8 +64,11 @@ export const Route = createFileRoute("/entrevista/nova")({
     if (typeof search["curriculo"] === "string") out.curriculo = search["curriculo"];
     if (search["fracas"] === true || search["fracas"] === "true") out.fracas = true;
     if (typeof search["tipo"] === "string") out.tipo = search["tipo"];
+    if (typeof search["modo"] === "string") out.modo = search["modo"];
+    if (typeof search["idioma"] === "string") out.idioma = search["idioma"];
     return out;
   },
+
   head: () => ({
     meta: [
       { title: "Preparar entrevista simulada | MatchCV Recruiter" },
@@ -93,7 +108,46 @@ function NewInterviewPage() {
   const [difficulty, setDifficulty] = useState<Difficulty>("intermediario");
   const [questionCount, setQuestionCount] = useState<5 | 10 | 15>(5);
   const [feedbackMode, setFeedbackMode] = useState<FeedbackMode>("imediato");
+  const [answerMode, setAnswerMode] = useState<AnswerMode>(
+    search.modo === "voz" ? "voz" : search.modo === "texto" ? "texto" : "hibrido",
+  );
+  const [language, setLanguage] = useState<InterviewLanguage>(
+    search.idioma === "en-US" ? "en-US" : "pt-BR",
+  );
+  const [micPermission, setMicPermission] = useState<MicPermission>("desconhecida");
+  const [testingMic, setTestingMic] = useState(false);
+  const [voiceSupported, setVoiceSupported] = useState(true);
+  const [speaking, setSpeaking] = useState(false);
   const [starting, setStarting] = useState(false);
+
+  useEffect(() => {
+    warmUpVoices();
+    setVoiceSupported(isRecognitionSupported());
+    return () => stopSpeaking();
+  }, []);
+
+  const testMic = async () => {
+    setTestingMic(true);
+    const result = await requestMicPermission();
+    setMicPermission(result);
+    setTestingMic(false);
+    if (result === "permitida") toast.success("Microfone autorizado. Tudo pronto para falar.");
+    if (result === "negada")
+      toast.error("O microfone não foi autorizado. Você pode responder digitando.");
+    if (result === "indisponivel")
+      toast.error("Não encontramos um microfone neste aparelho. Você pode responder digitando.");
+  };
+
+  const previewVoice = () => {
+    setSpeaking(true);
+    speak(
+      language === "en-US"
+        ? "Hi! I am your interview coach. I will ask one question at a time."
+        : "Olá! Eu sou o seu recrutador nesta simulação. Vou fazer uma pergunta de cada vez.",
+      { lang: language, onEnd: () => setSpeaking(false) },
+    );
+  };
+
 
   useEffect(() => {
     syncFromAnalyses();
@@ -117,14 +171,22 @@ function NewInterviewPage() {
       toast.error("Escolha uma vaga e um currículo para começar.");
       return;
     }
+    stopSpeaking();
+    const usesVoice = answerMode !== "texto";
+    if (usesVoice && voiceSupported && micPermission === "desconhecida") {
+      const result = await requestMicPermission();
+      setMicPermission(result);
+    }
     setStarting(true);
     const config: InterviewConfig = {
       type,
       difficulty,
       questionCount,
       feedbackMode,
-      answerMode: "texto",
+      answerMode: voiceSupported ? answerMode : "texto",
+      language,
     };
+
     try {
       const opening = await startInterview({
         data: {
@@ -354,17 +416,117 @@ function NewInterviewPage() {
 
             <div className="grid gap-2">
               <Label>Modo de resposta</Label>
-              <div className="flex flex-wrap items-center gap-3">
-                <Badge variant="secondary" className="px-3 py-2 text-sm">
-                  Texto
-                </Badge>
-                <span className="text-sm text-muted-foreground">
-                  Resposta por voz e gravação: em breve.
-                </span>
-              </div>
+              <RadioGroup
+                value={answerMode}
+                onValueChange={(v) => setAnswerMode(v as AnswerMode)}
+                className="grid gap-3"
+              >
+                {(["hibrido", "voz", "texto"] as AnswerMode[]).map((m) => (
+                  <Label
+                    key={m}
+                    htmlFor={`modo-${m}`}
+                    className="flex cursor-pointer items-start gap-3 rounded-lg border p-4 has-[:checked]:border-primary has-[:checked]:bg-accent"
+                  >
+                    <RadioGroupItem id={`modo-${m}`} value={m} className="mt-1" />
+                    <span>
+                      <span className="flex flex-wrap items-center gap-2 text-base font-semibold">
+                        {ANSWER_MODE_LABELS[m]}
+                        {m === "hibrido" ? <Badge>Padrão</Badge> : null}
+                      </span>
+                      <span className="mt-1 block text-sm font-normal text-muted-foreground">
+                        {m === "texto"
+                          ? "Você escreve todas as respostas."
+                          : m === "voz"
+                            ? "O recrutador fala as perguntas e você responde falando."
+                            : "O recrutador fala as perguntas e você escolhe falar ou digitar em cada resposta."}
+                      </span>
+                    </span>
+                  </Label>
+                ))}
+              </RadioGroup>
+              {!voiceSupported ? (
+                <Alert className="border-warning">
+                  <Info className="size-4" aria-hidden="true" />
+                  <AlertTitle>Voz indisponível neste navegador</AlertTitle>
+                  <AlertDescription>
+                    O recurso de voz não está disponível neste navegador. Você pode continuar a
+                    entrevista digitando suas respostas.
+                  </AlertDescription>
+                </Alert>
+              ) : null}
+            </div>
+
+            <div className="grid gap-2">
+              <Label>Idioma da entrevista</Label>
+              <RadioGroup
+                value={language}
+                onValueChange={(v) => setLanguage(v as InterviewLanguage)}
+                className="flex flex-wrap gap-3"
+              >
+                {(["pt-BR", "en-US"] as InterviewLanguage[]).map((l) => (
+                  <Label
+                    key={l}
+                    htmlFor={`idioma-${l}`}
+                    className="flex cursor-pointer items-center gap-2 rounded-lg border px-4 py-3 text-base has-[:checked]:border-primary has-[:checked]:bg-accent"
+                  >
+                    <RadioGroupItem id={`idioma-${l}`} value={l} />
+                    {LANGUAGE_LABELS[l]}
+                  </Label>
+                ))}
+              </RadioGroup>
             </div>
           </CardContent>
         </Card>
+
+        {answerMode !== "texto" && voiceSupported ? (
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-xl">4. Preparar o áudio</CardTitle>
+              <CardDescription>
+                Faça a entrevista em um local silencioso. A transcrição da sua fala aparece na tela e
+                pode ser corrigida antes de enviar.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="grid gap-4">
+              <div className="flex flex-wrap items-center gap-3">
+                <Button
+                  type="button"
+                  size="lg"
+                  variant="outline"
+                  onClick={() => void testMic()}
+                  disabled={testingMic}
+                >
+                  {testingMic ? (
+                    <Loader2 className="size-4 animate-spin" aria-hidden="true" />
+                  ) : (
+                    <Mic className="size-4" aria-hidden="true" />
+                  )}
+                  Testar microfone
+                </Button>
+                <Button type="button" size="lg" variant="outline" onClick={previewVoice}>
+                  <Volume2 className="size-4" aria-hidden="true" />
+                  {speaking ? "Reproduzindo…" : "Ouvir voz do recrutador"}
+                </Button>
+                <Badge
+                  variant={micPermission === "permitida" ? "default" : "secondary"}
+                  className="px-3 py-2 text-sm"
+                >
+                  {micPermission === "permitida"
+                    ? "Microfone autorizado"
+                    : micPermission === "negada"
+                      ? "Microfone não autorizado"
+                      : micPermission === "indisponivel"
+                        ? "Microfone indisponível"
+                        : "Permissão ainda não solicitada"}
+                </Badge>
+              </div>
+              <p className="text-sm text-muted-foreground">
+                O áudio é utilizado somente para gerar a transcrição. Por padrão, a gravação não é
+                armazenada.
+              </p>
+            </CardContent>
+          </Card>
+        ) : null}
 
         <Card className="border-primary/40 bg-accent/40">
           <CardHeader>
@@ -387,8 +549,13 @@ function NewInterviewPage() {
               <strong>Feedback:</strong>{" "}
               {feedbackMode === "imediato" ? "após cada resposta" : "somente no final"}
             </p>
+            <p>
+              <strong>Modo:</strong> {ANSWER_MODE_LABELS[voiceSupported ? answerMode : "texto"]} •{" "}
+              <strong>Idioma:</strong> {LANGUAGE_LABELS[language]}
+            </p>
           </CardContent>
         </Card>
+
 
         <Button size="lg" className="h-14 text-base" onClick={begin} disabled={starting || !job || !resume}>
           {starting ? (
