@@ -171,14 +171,22 @@ function NewInterviewPage() {
       toast.error("Escolha uma vaga e um currículo para começar.");
       return;
     }
+    stopSpeaking();
+    const usesVoice = answerMode !== "texto";
+    if (usesVoice && voiceSupported && micPermission === "desconhecida") {
+      const result = await requestMicPermission();
+      setMicPermission(result);
+    }
     setStarting(true);
     const config: InterviewConfig = {
       type,
       difficulty,
       questionCount,
       feedbackMode,
-      answerMode: "texto",
+      answerMode: voiceSupported ? answerMode : "texto",
+      language,
     };
+
     try {
       const opening = await startInterview({
         data: {
