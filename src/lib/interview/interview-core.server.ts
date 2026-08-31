@@ -42,12 +42,42 @@ const CRITERIA = [
   "Autenticidade e consistência com o currículo",
 ];
 
-const QUESTION_HINT = `{"text":"","kind":"rh|comportamental|tecnica|gestor","why":"","starSuggested":false,"isFollowUp":false}`;
+const QUESTION_HINT = `{"text":"","kind":"rh|comportamental|tecnica|gestor","why":"","starSuggested":false,"isFollowUp":false,"translation":"","vocabulary":[{"term":"","meaning":""}],"spoken":""}`;
 const OPENING_HINT = `{"intro":"","question":${QUESTION_HINT}}`;
-const EVAL_HINT = `{"criteria":[{"name":"","score":1,"comment":""}],"overall":1,"whatWorked":[""],"toImprove":[""],"missing":[""],"relateToJob":"","suggestedStructure":"","improvedExample":"","starGuide":{"situacao":"","tarefa":"","acao":"","resultado":""},"needsFollowUp":false,"followUpQuestion":""}`;
+const EVAL_HINT = `{"criteria":[{"name":"","score":1,"comment":""}],"overall":1,"whatWorked":[""],"toImprove":[""],"missing":[""],"relateToJob":"","suggestedStructure":"","improvedExample":"","starGuide":{"situacao":"","tarefa":"","acao":"","resultado":""},"needsFollowUp":false,"followUpQuestion":"","spokenSummary":"","languageNotes":[""]}`;
 const REPORT_HINT = `{"summary":"","strengths":[""],"competencies":[""],"developmentAreas":[""],"strongestAnswers":[{"question":"","why":""}],"answersToRedo":[{"question":"","why":""}],"hardestQuestions":[""],"realInterviewTips":[""],"actionPlan":[{"action":"","why":""}],"studySuggestions":[""],"evolution":""}`;
 
 type Ctx = z.infer<typeof openingInput>;
+
+function isEnglish(data: Ctx) {
+  return data.config.language === "en-US";
+}
+
+function languageBlock(data: Ctx) {
+  if (isEnglish(data)) {
+    return `IDIOMA DA ENTREVISTA: Inglês (en-US).
+- Escreva "intro", "text" e "spoken" em inglês natural de entrevista.
+- Preencha "translation" com a tradução da pergunta para português (será mostrada só se o
+  candidato pedir) e "vocabulary" com 3 a 6 termos úteis da pergunta, com explicação simples
+  em português.
+- Nas avaliações, escreva os comentários em português, mas mantenha os exemplos de resposta
+  em inglês.
+- Nunca avalie sotaque, pronúncia nativa, voz, timbre ou velocidade da fala. Aponte apenas
+  erros de idioma que atrapalhem o entendimento, em "languageNotes", com tom educativo.`;
+  }
+  return `IDIOMA DA ENTREVISTA: Português do Brasil (pt-BR). Deixe "translation" e "vocabulary" vazios.`;
+}
+
+function voiceBlock(data: Ctx) {
+  const mode = data.config.answerMode;
+  const spoken = `O campo "spoken" é a fala curta do recrutador, lida em voz alta: no máximo 2 frases,
+frases simples, sem listas, sem marcadores e sem repetir a pergunta inteira duas vezes.`;
+  if (mode === "texto") return spoken;
+  return `${spoken}
+A resposta do candidato pode chegar por voz, transcrita automaticamente. Ignore falhas de
+transcrição, repetições, gaguejos e pontuação irregular: avalie o conteúdo. Nunca avalie voz,
+sotaque, timbre, volume, idade percebida, gênero ou condição de fala.`;
+}
 
 function contextBlock(data: Ctx) {
   const { config } = data;
@@ -57,8 +87,14 @@ DESCRIÇÃO DA VAGA: """${(data.jobDescription ?? "").slice(0, 9000)}"""
 CURRÍCULO DO CANDIDATO: """${(data.resumeText ?? "").slice(0, 12000)}"""
 TIPO DE ENTREVISTA: ${INTERVIEW_TYPE_LABELS[config.type]}
 NÍVEL DE DIFICULDADE: ${DIFFICULTY_LABELS[config.difficulty]}
-TOTAL DE PERGUNTAS DA SIMULAÇÃO: ${config.questionCount}`;
+TOTAL DE PERGUNTAS DA SIMULAÇÃO: ${config.questionCount}
+MODO DE RESPOSTA: ${config.answerMode}
+
+${languageBlock(data)}
+
+${voiceBlock(data)}`;
 }
+
 
 function typeGuidance(type: Ctx["config"]["type"]) {
   if (type === "completa")
