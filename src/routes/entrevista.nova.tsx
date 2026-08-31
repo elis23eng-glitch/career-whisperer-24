@@ -93,7 +93,46 @@ function NewInterviewPage() {
   const [difficulty, setDifficulty] = useState<Difficulty>("intermediario");
   const [questionCount, setQuestionCount] = useState<5 | 10 | 15>(5);
   const [feedbackMode, setFeedbackMode] = useState<FeedbackMode>("imediato");
+  const [answerMode, setAnswerMode] = useState<AnswerMode>(
+    search.modo === "voz" ? "voz" : search.modo === "texto" ? "texto" : "hibrido",
+  );
+  const [language, setLanguage] = useState<InterviewLanguage>(
+    search.idioma === "en-US" ? "en-US" : "pt-BR",
+  );
+  const [micPermission, setMicPermission] = useState<MicPermission>("desconhecida");
+  const [testingMic, setTestingMic] = useState(false);
+  const [voiceSupported, setVoiceSupported] = useState(true);
+  const [speaking, setSpeaking] = useState(false);
   const [starting, setStarting] = useState(false);
+
+  useEffect(() => {
+    warmUpVoices();
+    setVoiceSupported(isRecognitionSupported());
+    return () => stopSpeaking();
+  }, []);
+
+  const testMic = async () => {
+    setTestingMic(true);
+    const result = await requestMicPermission();
+    setMicPermission(result);
+    setTestingMic(false);
+    if (result === "permitida") toast.success("Microfone autorizado. Tudo pronto para falar.");
+    if (result === "negada")
+      toast.error("O microfone não foi autorizado. Você pode responder digitando.");
+    if (result === "indisponivel")
+      toast.error("Não encontramos um microfone neste aparelho. Você pode responder digitando.");
+  };
+
+  const previewVoice = () => {
+    setSpeaking(true);
+    speak(
+      language === "en-US"
+        ? "Hi! I am your interview coach. I will ask one question at a time."
+        : "Olá! Eu sou o seu recrutador nesta simulação. Vou fazer uma pergunta de cada vez.",
+      { lang: language, onEnd: () => setSpeaking(false) },
+    );
+  };
+
 
   useEffect(() => {
     syncFromAnalyses();
