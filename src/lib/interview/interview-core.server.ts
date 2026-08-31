@@ -157,6 +157,11 @@ export async function runEvaluate(data: z.infer<typeof evaluateInput>) {
 Em "criteria", avalie EXATAMENTE estes critérios, cada um com nota de 1 a 5 e um comentário explicando a nota:
 ${CRITERIA.map((c) => `- ${c}`).join("\n")}
 "overall" é a média arredondada em uma casa decimal, de 1 a 5.
+Em "spokenSummary", escreva um resumo falado de no máximo 3 frases curtas, encorajador, com o ponto
+forte principal e a melhoria principal — é este texto que será lido em voz alta.
+A resposta pode ter vindo de uma transcrição de voz (origem: ${data.source}); nunca comente voz,
+sotaque, timbre, velocidade ou características pessoais.
+
 Em "improvedExample", reescreva a resposta usando SOMENTE as informações que o candidato realmente forneceu
 e o que consta no currículo. Não invente cargos, projetos, resultados, ferramentas ou conhecimentos.
 Se faltarem informações essenciais, aponte em "missing" e defina needsFollowUp como true com uma
