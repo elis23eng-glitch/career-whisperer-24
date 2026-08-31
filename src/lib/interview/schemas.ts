@@ -89,7 +89,16 @@ export const questionSchema = z.object({
   why: z.string().default(""),
   starSuggested: z.boolean().default(false),
   isFollowUp: z.boolean().default(false),
+  /** Tradução para português — mostrada só quando o usuário pedir (entrevista em inglês). */
+  translation: z.string().default(""),
+  /** Ajuda de vocabulário para a entrevista em inglês. */
+  vocabulary: z
+    .array(z.object({ term: z.string(), meaning: z.string().default("") }))
+    .default([]),
+  /** Fala curta do recrutador, para leitura em voz alta. */
+  spoken: z.string().default(""),
 });
+
 export type InterviewQuestion = z.infer<typeof questionSchema>;
 
 export const openingSchema = z.object({
