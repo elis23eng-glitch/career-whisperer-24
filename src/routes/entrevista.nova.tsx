@@ -27,11 +27,21 @@ import {
 } from "@/lib/interview/store";
 import { startInterview } from "@/lib/interview/interview.functions";
 import {
+  isRecognitionSupported,
+  requestMicPermission,
+  type MicPermission,
+} from "@/lib/voice/recognition";
+import { speak, stopSpeaking, warmUpVoices } from "@/lib/voice/speech";
+import {
+  ANSWER_MODE_LABELS,
   DIFFICULTY_LABELS,
   INTERVIEW_TYPE_LABELS,
+  LANGUAGE_LABELS,
+  type AnswerMode,
   type Difficulty,
   type FeedbackMode,
   type InterviewConfig,
+  type InterviewLanguage,
   type InterviewSession,
   type InterviewType,
   type SavedJob,
@@ -43,6 +53,8 @@ interface InterviewSearch {
   curriculo?: string;
   fracas?: boolean;
   tipo?: string;
+  modo?: string;
+  idioma?: string;
 }
 
 export const Route = createFileRoute("/entrevista/nova")({
@@ -52,8 +64,11 @@ export const Route = createFileRoute("/entrevista/nova")({
     if (typeof search["curriculo"] === "string") out.curriculo = search["curriculo"];
     if (search["fracas"] === true || search["fracas"] === "true") out.fracas = true;
     if (typeof search["tipo"] === "string") out.tipo = search["tipo"];
+    if (typeof search["modo"] === "string") out.modo = search["modo"];
+    if (typeof search["idioma"] === "string") out.idioma = search["idioma"];
     return out;
   },
+
   head: () => ({
     meta: [
       { title: "Preparar entrevista simulada | MatchCV Recruiter" },
