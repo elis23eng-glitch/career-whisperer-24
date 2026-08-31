@@ -153,11 +153,21 @@ export type InterviewReport = z.infer<typeof reportSchema>;
 export interface InterviewTurn {
   index: number;
   question: InterviewQuestion;
+  /** Texto confirmado pelo usuário — nunca substituído por texto criado pela IA. */
   answer: string;
   answeredAt?: string;
   evaluation?: AnswerEvaluation;
   attempts: number;
+  /** Origem da resposta confirmada. */
+  source?: AnswerMode extends never ? never : "voz" | "texto";
+  /** Idioma usado nesta resposta. */
+  language?: InterviewLanguage;
+  /** Duração aproximada da resposta, em segundos. Sem áudio armazenado. */
+  durationSec?: number;
+  /** Quantas vezes o candidato pediu para repetir a pergunta. */
+  repeats?: number;
 }
+
 
 export interface InterviewSession {
   id: string;
