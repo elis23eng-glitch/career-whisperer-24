@@ -14,7 +14,194 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      interview_turns: {
+        Row: {
+          answer: string
+          answered_at: string | null
+          attempts: number
+          created_at: string
+          duration_sec: number | null
+          evaluation: Json | null
+          id: string
+          interview_id: string
+          language: string | null
+          question: Json
+          repeats: number | null
+          source: string | null
+          turn_index: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          answer?: string
+          answered_at?: string | null
+          attempts?: number
+          created_at?: string
+          duration_sec?: number | null
+          evaluation?: Json | null
+          id?: string
+          interview_id: string
+          language?: string | null
+          question?: Json
+          repeats?: number | null
+          source?: string | null
+          turn_index: number
+          updated_at?: string
+          user_id?: string
+        }
+        Update: {
+          answer?: string
+          answered_at?: string | null
+          attempts?: number
+          created_at?: string
+          duration_sec?: number | null
+          evaluation?: Json | null
+          id?: string
+          interview_id?: string
+          language?: string | null
+          question?: Json
+          repeats?: number | null
+          source?: string | null
+          turn_index?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "interview_turns_interview_id_fkey"
+            columns: ["interview_id"]
+            isOneToOne: false
+            referencedRelation: "interviews"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      interviews: {
+        Row: {
+          average_score: number | null
+          company: string
+          config: Json
+          created_at: string
+          id: string
+          intro: string
+          job_id: string
+          job_title: string
+          report: Json | null
+          resume_id: string
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          average_score?: number | null
+          company?: string
+          config?: Json
+          created_at?: string
+          id?: string
+          intro?: string
+          job_id?: string
+          job_title?: string
+          report?: Json | null
+          resume_id?: string
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Update: {
+          average_score?: number | null
+          company?: string
+          config?: Json
+          created_at?: string
+          id?: string
+          intro?: string
+          job_id?: string
+          job_title?: string
+          report?: Json | null
+          resume_id?: string
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      jobs: {
+        Row: {
+          analysis_id: string | null
+          company: string
+          created_at: string
+          description: string
+          id: string
+          location: string
+          seniority: string
+          title: string
+          updated_at: string
+          user_id: string
+          work_model: string
+        }
+        Insert: {
+          analysis_id?: string | null
+          company?: string
+          created_at?: string
+          description?: string
+          id?: string
+          location?: string
+          seniority?: string
+          title?: string
+          updated_at?: string
+          user_id?: string
+          work_model?: string
+        }
+        Update: {
+          analysis_id?: string | null
+          company?: string
+          created_at?: string
+          description?: string
+          id?: string
+          location?: string
+          seniority?: string
+          title?: string
+          updated_at?: string
+          user_id?: string
+          work_model?: string
+        }
+        Relationships: []
+      }
+      resumes: {
+        Row: {
+          analysis_id: string | null
+          created_at: string
+          file_name: string
+          id: string
+          is_primary: boolean
+          name: string
+          raw_text: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          analysis_id?: string | null
+          created_at?: string
+          file_name?: string
+          id?: string
+          is_primary?: boolean
+          name?: string
+          raw_text?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Update: {
+          analysis_id?: string | null
+          created_at?: string
+          file_name?: string
+          id?: string
+          is_primary?: boolean
+          name?: string
+          raw_text?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
