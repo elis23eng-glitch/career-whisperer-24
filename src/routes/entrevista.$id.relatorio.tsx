@@ -122,6 +122,41 @@ function ReportPage() {
         </Card>
       ) : null}
 
+      {(() => {
+        const voiceTurns = session.turns.filter((t) => t.source === "voz");
+        if (!voiceTurns.length) return null;
+        const totalSec = voiceTurns.reduce((sum, t) => sum + (t.durationSec ?? 0), 0);
+        const repeats = session.turns.reduce((sum, t) => sum + (t.repeats ?? 0), 0);
+        const avgSec = Math.round(totalSec / voiceTurns.length);
+        return (
+          <Card className="mb-6">
+            <CardHeader>
+              <CardTitle className="text-xl">Sua entrevista por voz</CardTitle>
+              <CardDescription>
+                Dados de apoio ao treino. Nenhuma gravação foi armazenada — apenas as transcrições
+                que você confirmou.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="grid gap-2 text-base">
+              <p>
+                <strong>Respostas faladas:</strong> {voiceTurns.length} de {session.turns.length}
+              </p>
+              <p>
+                <strong>Tempo médio por resposta falada:</strong> {avgSec} segundos
+              </p>
+              <p>
+                <strong>Perguntas repetidas em áudio:</strong> {repeats}
+              </p>
+              <p>
+                <strong>Idioma da simulação:</strong>{" "}
+                {session.config.language === "en-US" ? "Inglês" : "Português do Brasil"}
+              </p>
+            </CardContent>
+          </Card>
+        );
+      })()}
+
+
       <Card className="mb-6">
         <CardHeader>
           <CardTitle className="text-xl">Resumo do seu desempenho</CardTitle>
