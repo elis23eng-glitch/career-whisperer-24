@@ -1,5 +1,13 @@
 import { isBrowser, newId, subscribeStorage, listAnalyses } from "@/lib/storage";
 import type { InterviewSession, SavedJob, SavedResume } from "./schemas";
+import {
+  clearPrimaryResumes,
+  fetchAllFromCloud,
+  pushInterview,
+  pushJob,
+  pushResume,
+  removeRow,
+} from "./cloud";
 
 const JOBS_KEY = "matchcv:jobs";
 const RESUMES_KEY = "matchcv:resumes";
@@ -38,6 +46,49 @@ function write(key: string, value: unknown) {
 }
 
 const now = () => new Date().toISOString();
+
+/* ----------------------- Sincronização com o banco ------------------------ */
+
+let cloudUserId: string | null = null;
+
+function fireAndForget(promise: Promise<unknown>) {
+  promise.catch((err) => console.error("Falha ao salvar no banco de dados", err));
+}
+
+/** Carrega tudo do banco para o cache local do aparelho. */
+export async function hydrateFromCloud(userId: string) {
+  cloudUserId = userId;
+  const { jobs, resumes, interviews } = await fetchAllFromCloud();
+
+  // Envia para a nuvem o que existia só neste aparelho (primeira vez após o login).
+  const localJobs = read<SavedJob[]>(JOBS_KEY, []);
+  const localResumes = read<SavedResume[]>(RESUMES_KEY, []);
+  const localInterviews = read<InterviewSession[]>(INTERVIEWS_KEY, []);
+
+  const missingJobs = localJobs.filter((j) => !jobs.some((c) => c.id === j.id));
+  const missingResumes = localResumes.filter((r) => !resumes.some((c) => c.id === r.id));
+  const missingInterviews = localInterviews.filter((i) => !interviews.some((c) => c.id === i.id));
+
+  await Promise.all([
+    ...missingJobs.map((j) => pushJob(j, userId).catch(() => undefined)),
+    ...missingResumes.map((r) => pushResume(r, userId).catch(() => undefined)),
+    ...missingInterviews.map((i) => pushInterview(i, userId).catch(() => undefined)),
+  ]);
+
+  write(JOBS_KEY, [...jobs, ...missingJobs]);
+  write(RESUMES_KEY, [...resumes, ...missingResumes]);
+  write(INTERVIEWS_KEY, [...interviews, ...missingInterviews]);
+  notify();
+}
+
+/** Limpa o cache local ao sair da conta. */
+export function clearLocalCache() {
+  cloudUserId = null;
+  if (!isBrowser()) return;
+  [JOBS_KEY, RESUMES_KEY, INTERVIEWS_KEY].forEach((k) => localStorage.removeItem(k));
+  notify();
+}
+
 
 /* ---------------------------------- Vagas --------------------------------- */
 
