@@ -42,9 +42,22 @@ const NAV = [
 
 export function Header() {
   const router = useRouter();
+  const queryClient = useQueryClient();
+  const { user } = useAuth();
   const [theme, setThemeState] = useState<"light" | "dark">("light");
   const [menuOpen, setMenuOpen] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
+
+  const handleSignOut = async () => {
+    setMenuOpen(false);
+    await queryClient.cancelQueries();
+    queryClient.clear();
+    await supabase.auth.signOut();
+    toast.success("Você saiu da sua conta");
+    router.navigate({ to: "/", replace: true });
+  };
+
+
 
   useEffect(() => {
     const current = getTheme();
