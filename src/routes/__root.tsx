@@ -4,6 +4,7 @@ import {
   Link,
   createRootRouteWithContext,
   useRouter,
+  useRouterState,
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
@@ -15,6 +16,8 @@ import { Header } from "@/components/layout/Header";
 import { Toaster } from "@/components/ui/sonner";
 import { Button } from "@/components/ui/button";
 import { PrivacyDialog } from "@/components/PrivacyDialog";
+import { AuthProvider } from "@/hooks/useAuth";
+import { RequireAuth } from "@/components/auth/RequireAuth";
 
 function NotFoundComponent() {
   return (
