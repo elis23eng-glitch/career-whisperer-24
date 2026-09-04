@@ -110,6 +110,7 @@ export function saveJob(input: Omit<SavedJob, "id" | "createdAt" | "updatedAt"> 
   if (idx >= 0) all[idx] = record;
   else all.unshift(record);
   write(JOBS_KEY, all);
+  if (cloudUserId) fireAndForget(pushJob(record, cloudUserId));
   notify();
   return record;
 }
@@ -119,6 +120,7 @@ export function deleteJob(id: string) {
     JOBS_KEY,
     read<SavedJob[]>(JOBS_KEY, []).filter((j) => j.id !== id),
   );
+  if (cloudUserId) fireAndForget(removeRow("jobs", id));
   notify();
 }
 
