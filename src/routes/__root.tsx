@@ -114,17 +114,36 @@ function RootShell({ children }: { children: ReactNode }) {
   );
 }
 
+const PROTECTED_PREFIXES = [
+  "/painel",
+  "/vagas",
+  "/meu-curriculo",
+  "/entrevista",
+  "/evolucao",
+  "/curriculos",
+];
+
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const isProtected = PROTECTED_PREFIXES.some((p) => pathname.startsWith(p));
 
   return (
     <QueryClientProvider client={queryClient}>
-      <div className="flex min-h-dvh flex-col">
-        <Header />
-        <main className="flex-1">
-          {/* Required: nested routes render here. */}
-          <Outlet />
-        </main>
+      <AuthProvider>
+        <div className="flex min-h-dvh flex-col">
+          <Header />
+          <main className="flex-1">
+            {/* Required: nested routes render here. */}
+            {isProtected ? (
+              <RequireAuth>
+                <Outlet />
+              </RequireAuth>
+            ) : (
+              <Outlet />
+            )}
+          </main>
+
         <footer className="no-print border-t bg-secondary/60">
           <div className="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-8 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
             <p>

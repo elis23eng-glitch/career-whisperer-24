@@ -13,6 +13,7 @@ import { Route as VagasRouteImport } from './routes/vagas'
 import { Route as PainelRouteImport } from './routes/painel'
 import { Route as MeuCurriculoRouteImport } from './routes/meu-curriculo'
 import { Route as EvolucaoRouteImport } from './routes/evolucao'
+import { Route as EntrarRouteImport } from './routes/entrar'
 import { Route as CurriculosRouteImport } from './routes/curriculos'
 import { Route as ComoFuncionaRouteImport } from './routes/como-funciona'
 import { Route as AnaliseRouteImport } from './routes/analise'
@@ -40,6 +41,11 @@ const MeuCurriculoRoute = MeuCurriculoRouteImport.update({
 const EvolucaoRoute = EvolucaoRouteImport.update({
   id: '/evolucao',
   path: '/evolucao',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EntrarRoute = EntrarRouteImport.update({
+  id: '/entrar',
+  path: '/entrar',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CurriculosRoute = CurriculosRouteImport.update({
@@ -88,6 +94,7 @@ export interface FileRoutesByFullPath {
   '/analise': typeof AnaliseRoute
   '/como-funciona': typeof ComoFuncionaRoute
   '/curriculos': typeof CurriculosRoute
+  '/entrar': typeof EntrarRoute
   '/evolucao': typeof EvolucaoRoute
   '/meu-curriculo': typeof MeuCurriculoRoute
   '/painel': typeof PainelRoute
@@ -102,6 +109,7 @@ export interface FileRoutesByTo {
   '/analise': typeof AnaliseRoute
   '/como-funciona': typeof ComoFuncionaRoute
   '/curriculos': typeof CurriculosRoute
+  '/entrar': typeof EntrarRoute
   '/evolucao': typeof EvolucaoRoute
   '/meu-curriculo': typeof MeuCurriculoRoute
   '/painel': typeof PainelRoute
@@ -117,6 +125,7 @@ export interface FileRoutesById {
   '/analise': typeof AnaliseRoute
   '/como-funciona': typeof ComoFuncionaRoute
   '/curriculos': typeof CurriculosRoute
+  '/entrar': typeof EntrarRoute
   '/evolucao': typeof EvolucaoRoute
   '/meu-curriculo': typeof MeuCurriculoRoute
   '/painel': typeof PainelRoute
@@ -133,6 +142,7 @@ export interface FileRouteTypes {
     | '/analise'
     | '/como-funciona'
     | '/curriculos'
+    | '/entrar'
     | '/evolucao'
     | '/meu-curriculo'
     | '/painel'
@@ -147,6 +157,7 @@ export interface FileRouteTypes {
     | '/analise'
     | '/como-funciona'
     | '/curriculos'
+    | '/entrar'
     | '/evolucao'
     | '/meu-curriculo'
     | '/painel'
@@ -161,6 +172,7 @@ export interface FileRouteTypes {
     | '/analise'
     | '/como-funciona'
     | '/curriculos'
+    | '/entrar'
     | '/evolucao'
     | '/meu-curriculo'
     | '/painel'
@@ -176,6 +188,7 @@ export interface RootRouteChildren {
   AnaliseRoute: typeof AnaliseRoute
   ComoFuncionaRoute: typeof ComoFuncionaRoute
   CurriculosRoute: typeof CurriculosRoute
+  EntrarRoute: typeof EntrarRoute
   EvolucaoRoute: typeof EvolucaoRoute
   MeuCurriculoRoute: typeof MeuCurriculoRoute
   PainelRoute: typeof PainelRoute
@@ -213,6 +226,13 @@ declare module '@tanstack/react-router' {
       path: '/evolucao'
       fullPath: '/evolucao'
       preLoaderRoute: typeof EvolucaoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/entrar': {
+      id: '/entrar'
+      path: '/entrar'
+      fullPath: '/entrar'
+      preLoaderRoute: typeof EntrarRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/curriculos': {
@@ -291,6 +311,7 @@ const rootRouteChildren: RootRouteChildren = {
   AnaliseRoute: AnaliseRoute,
   ComoFuncionaRoute: ComoFuncionaRoute,
   CurriculosRoute: CurriculosRoute,
+  EntrarRoute: EntrarRoute,
   EvolucaoRoute: EvolucaoRoute,
   MeuCurriculoRoute: MeuCurriculoRoute,
   PainelRoute: PainelRoute,
