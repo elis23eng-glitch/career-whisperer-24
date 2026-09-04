@@ -1,7 +1,17 @@
 import { useEffect, useState } from "react";
 import { Link, useRouter } from "@tanstack/react-router";
-import { Menu, Moon, ShieldCheck, Sun, Trash2, FileSearch } from "lucide-react";
+import {
+  Menu,
+  Moon,
+  ShieldCheck,
+  Sun,
+  Trash2,
+  FileSearch,
+  LogIn,
+  LogOut,
+} from "lucide-react";
 import { toast } from "sonner";
+import { useQueryClient } from "@tanstack/react-query";
 
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
@@ -17,6 +27,8 @@ import {
 } from "@/components/ui/alert-dialog";
 import { getTheme, setTheme, wipeAllData } from "@/lib/storage";
 import { PrivacyDialog } from "@/components/PrivacyDialog";
+import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
 
 const NAV = [
   { to: "/painel", label: "Painel" },
