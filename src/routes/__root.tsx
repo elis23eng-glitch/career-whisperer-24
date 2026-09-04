@@ -144,23 +144,25 @@ function RootComponent() {
             )}
           </main>
 
-        <footer className="no-print border-t bg-secondary/60">
-          <div className="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-8 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
-            <p>
-              MatchCV — análise de compatibilidade entre currículo e vaga. Uso imediato, sem
-              cadastro.
-            </p>
-            <PrivacyDialog
-              trigger={
-                <Button variant="link" className="h-auto p-0 text-sm">
-                  Privacidade dos seus dados
-                </Button>
-              }
-            />
-          </div>
-        </footer>
-      </div>
-      <Toaster position="top-center" richColors />
+          <footer className="no-print border-t bg-secondary/60">
+            <div className="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-8 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
+              <p>
+                MatchCV — análise de compatibilidade entre currículo e vaga, com entrevista
+                simulada.
+              </p>
+              <PrivacyDialog
+                trigger={
+                  <Button variant="link" className="h-auto p-0 text-sm">
+                    Privacidade dos seus dados
+                  </Button>
+                }
+              />
+            </div>
+          </footer>
+        </div>
+        <Toaster position="top-center" richColors />
+      </AuthProvider>
     </QueryClientProvider>
+
   );
 }
