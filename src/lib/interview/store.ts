@@ -110,6 +110,7 @@ export function saveJob(input: Omit<SavedJob, "id" | "createdAt" | "updatedAt"> 
   if (idx >= 0) all[idx] = record;
   else all.unshift(record);
   write(JOBS_KEY, all);
+  if (cloudUserId) fireAndForget(pushJob(record, cloudUserId));
   notify();
   return record;
 }
@@ -119,6 +120,7 @@ export function deleteJob(id: string) {
     JOBS_KEY,
     read<SavedJob[]>(JOBS_KEY, []).filter((j) => j.id !== id),
   );
+  if (cloudUserId) fireAndForget(removeRow("jobs", id));
   notify();
 }
 
@@ -156,6 +158,10 @@ export function saveResume(
     });
   }
   write(RESUMES_KEY, all);
+  if (cloudUserId) {
+    fireAndForget(pushResume(record, cloudUserId));
+    if (record.isPrimary) fireAndForget(clearPrimaryResumes(cloudUserId, record.id));
+  }
   notify();
   return record;
 }
@@ -164,6 +170,12 @@ export function setPrimaryResume(id: string) {
   const all = read<SavedResume[]>(RESUMES_KEY, []);
   all.forEach((r) => (r.isPrimary = r.id === id));
   write(RESUMES_KEY, all);
+  if (cloudUserId) {
+    const userId = cloudUserId;
+    const current = all.find((r) => r.id === id);
+    if (current) fireAndForget(pushResume(current, userId));
+    fireAndForget(clearPrimaryResumes(userId, id));
+  }
   notify();
 }
 
@@ -172,6 +184,7 @@ export function deleteResume(id: string) {
     RESUMES_KEY,
     read<SavedResume[]>(RESUMES_KEY, []).filter((r) => r.id !== id),
   );
+  if (cloudUserId) fireAndForget(removeRow("resumes", id));
   notify();
 }
 
@@ -194,6 +207,7 @@ export function saveInterview(session: InterviewSession) {
   if (idx >= 0) all[idx] = record;
   else all.unshift(record);
   write(INTERVIEWS_KEY, all);
+  if (cloudUserId) fireAndForget(pushInterview(record, cloudUserId));
   notify();
   return record;
 }
@@ -203,6 +217,7 @@ export function deleteInterview(id: string) {
     INTERVIEWS_KEY,
     read<InterviewSession[]>(INTERVIEWS_KEY, []).filter((i) => i.id !== id),
   );
+  if (cloudUserId) fireAndForget(removeRow("interviews", id));
   notify();
 }
 
@@ -261,6 +276,11 @@ export function syncFromAnalyses() {
     if (!resumes.some((r) => r.isPrimary) && resumes[0]) resumes[0].isPrimary = true;
     write(JOBS_KEY, jobs);
     write(RESUMES_KEY, resumes);
+    if (cloudUserId) {
+      const userId = cloudUserId;
+      jobs.forEach((j) => fireAndForget(pushJob(j, userId)));
+      resumes.forEach((r) => fireAndForget(pushResume(r, userId)));
+    }
     notify();
   }
 }

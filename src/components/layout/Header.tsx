@@ -1,7 +1,17 @@
 import { useEffect, useState } from "react";
 import { Link, useRouter } from "@tanstack/react-router";
-import { Menu, Moon, ShieldCheck, Sun, Trash2, FileSearch } from "lucide-react";
+import {
+  Menu,
+  Moon,
+  ShieldCheck,
+  Sun,
+  Trash2,
+  FileSearch,
+  LogIn,
+  LogOut,
+} from "lucide-react";
 import { toast } from "sonner";
+import { useQueryClient } from "@tanstack/react-query";
 
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
@@ -17,6 +27,8 @@ import {
 } from "@/components/ui/alert-dialog";
 import { getTheme, setTheme, wipeAllData } from "@/lib/storage";
 import { PrivacyDialog } from "@/components/PrivacyDialog";
+import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
 
 const NAV = [
   { to: "/painel", label: "Painel" },
@@ -30,9 +42,22 @@ const NAV = [
 
 export function Header() {
   const router = useRouter();
+  const queryClient = useQueryClient();
+  const { user } = useAuth();
   const [theme, setThemeState] = useState<"light" | "dark">("light");
   const [menuOpen, setMenuOpen] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
+
+  const handleSignOut = async () => {
+    setMenuOpen(false);
+    await queryClient.cancelQueries();
+    queryClient.clear();
+    await supabase.auth.signOut();
+    toast.success("Você saiu da sua conta");
+    router.navigate({ to: "/", replace: true });
+  };
+
+
 
   useEffect(() => {
     const current = getTheme();
@@ -96,6 +121,26 @@ export function Header() {
           >
             {theme === "light" ? <Moon className="size-4" /> : <Sun className="size-4" />}
           </Button>
+
+          {user ? (
+            <Button
+              variant="outline"
+              size="sm"
+              className="hidden md:inline-flex"
+              onClick={handleSignOut}
+            >
+              <LogOut className="size-4" aria-hidden="true" />
+              Sair
+            </Button>
+          ) : (
+            <Button size="sm" className="hidden md:inline-flex" asChild>
+              <Link to="/entrar">
+                <LogIn className="size-4" aria-hidden="true" />
+                Entrar
+              </Link>
+            </Button>
+          )}
+
           <Button
             variant="outline"
             size="sm"
@@ -105,6 +150,7 @@ export function Header() {
             <Trash2 className="size-4" aria-hidden="true" />
             Apagar meus dados
           </Button>
+
 
           <Sheet open={menuOpen} onOpenChange={setMenuOpen}>
             <SheetTrigger asChild>
@@ -128,6 +174,19 @@ export function Header() {
                     {item.label}
                   </Link>
                 ))}
+                {user ? (
+                  <Button variant="outline" onClick={handleSignOut}>
+                    <LogOut className="size-4" aria-hidden="true" />
+                    Sair da conta
+                  </Button>
+                ) : (
+                  <Button asChild>
+                    <Link to="/entrar" onClick={() => setMenuOpen(false)}>
+                      <LogIn className="size-4" aria-hidden="true" />
+                      Entrar ou criar conta
+                    </Link>
+                  </Button>
+                )}
                 <PrivacyDialog
                   trigger={
                     <Button variant="ghost" className="justify-start">

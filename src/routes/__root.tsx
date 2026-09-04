@@ -4,6 +4,7 @@ import {
   Link,
   createRootRouteWithContext,
   useRouter,
+  useRouterState,
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
@@ -15,6 +16,8 @@ import { Header } from "@/components/layout/Header";
 import { Toaster } from "@/components/ui/sonner";
 import { Button } from "@/components/ui/button";
 import { PrivacyDialog } from "@/components/PrivacyDialog";
+import { AuthProvider } from "@/hooks/useAuth";
+import { RequireAuth } from "@/components/auth/RequireAuth";
 
 function NotFoundComponent() {
   return (
@@ -114,34 +117,55 @@ function RootShell({ children }: { children: ReactNode }) {
   );
 }
 
+const PROTECTED_PREFIXES = [
+  "/painel",
+  "/vagas",
+  "/meu-curriculo",
+  "/entrevista",
+  "/evolucao",
+  "/curriculos",
+];
+
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const isProtected = PROTECTED_PREFIXES.some((p) => pathname.startsWith(p));
 
   return (
     <QueryClientProvider client={queryClient}>
-      <div className="flex min-h-dvh flex-col">
-        <Header />
-        <main className="flex-1">
-          {/* Required: nested routes render here. */}
-          <Outlet />
-        </main>
-        <footer className="no-print border-t bg-secondary/60">
-          <div className="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-8 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
-            <p>
-              MatchCV — análise de compatibilidade entre currículo e vaga. Uso imediato, sem
-              cadastro.
-            </p>
-            <PrivacyDialog
-              trigger={
-                <Button variant="link" className="h-auto p-0 text-sm">
-                  Privacidade dos seus dados
-                </Button>
-              }
-            />
-          </div>
-        </footer>
-      </div>
-      <Toaster position="top-center" richColors />
+      <AuthProvider>
+        <div className="flex min-h-dvh flex-col">
+          <Header />
+          <main className="flex-1">
+            {/* Required: nested routes render here. */}
+            {isProtected ? (
+              <RequireAuth>
+                <Outlet />
+              </RequireAuth>
+            ) : (
+              <Outlet />
+            )}
+          </main>
+
+          <footer className="no-print border-t bg-secondary/60">
+            <div className="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-8 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
+              <p>
+                MatchCV — análise de compatibilidade entre currículo e vaga, com entrevista
+                simulada.
+              </p>
+              <PrivacyDialog
+                trigger={
+                  <Button variant="link" className="h-auto p-0 text-sm">
+                    Privacidade dos seus dados
+                  </Button>
+                }
+              />
+            </div>
+          </footer>
+        </div>
+        <Toaster position="top-center" richColors />
+      </AuthProvider>
     </QueryClientProvider>
+
   );
 }
