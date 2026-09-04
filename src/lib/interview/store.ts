@@ -276,6 +276,11 @@ export function syncFromAnalyses() {
     if (!resumes.some((r) => r.isPrimary) && resumes[0]) resumes[0].isPrimary = true;
     write(JOBS_KEY, jobs);
     write(RESUMES_KEY, resumes);
+    if (cloudUserId) {
+      const userId = cloudUserId;
+      jobs.forEach((j) => fireAndForget(pushJob(j, userId)));
+      resumes.forEach((r) => fireAndForget(pushResume(r, userId)));
+    }
     notify();
   }
 }
