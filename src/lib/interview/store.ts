@@ -158,6 +158,10 @@ export function saveResume(
     });
   }
   write(RESUMES_KEY, all);
+  if (cloudUserId) {
+    fireAndForget(pushResume(record, cloudUserId));
+    if (record.isPrimary) fireAndForget(clearPrimaryResumes(cloudUserId, record.id));
+  }
   notify();
   return record;
 }
@@ -166,6 +170,12 @@ export function setPrimaryResume(id: string) {
   const all = read<SavedResume[]>(RESUMES_KEY, []);
   all.forEach((r) => (r.isPrimary = r.id === id));
   write(RESUMES_KEY, all);
+  if (cloudUserId) {
+    const userId = cloudUserId;
+    const current = all.find((r) => r.id === id);
+    if (current) fireAndForget(pushResume(current, userId));
+    fireAndForget(clearPrimaryResumes(userId, id));
+  }
   notify();
 }
 
@@ -174,6 +184,7 @@ export function deleteResume(id: string) {
     RESUMES_KEY,
     read<SavedResume[]>(RESUMES_KEY, []).filter((r) => r.id !== id),
   );
+  if (cloudUserId) fireAndForget(removeRow("resumes", id));
   notify();
 }
 
