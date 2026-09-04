@@ -207,6 +207,7 @@ export function saveInterview(session: InterviewSession) {
   if (idx >= 0) all[idx] = record;
   else all.unshift(record);
   write(INTERVIEWS_KEY, all);
+  if (cloudUserId) fireAndForget(pushInterview(record, cloudUserId));
   notify();
   return record;
 }
@@ -216,6 +217,7 @@ export function deleteInterview(id: string) {
     INTERVIEWS_KEY,
     read<InterviewSession[]>(INTERVIEWS_KEY, []).filter((i) => i.id !== id),
   );
+  if (cloudUserId) fireAndForget(removeRow("interviews", id));
   notify();
 }
 
