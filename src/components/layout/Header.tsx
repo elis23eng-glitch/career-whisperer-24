@@ -174,6 +174,19 @@ export function Header() {
                     {item.label}
                   </Link>
                 ))}
+                {user ? (
+                  <Button variant="outline" onClick={handleSignOut}>
+                    <LogOut className="size-4" aria-hidden="true" />
+                    Sair da conta
+                  </Button>
+                ) : (
+                  <Button asChild>
+                    <Link to="/entrar" onClick={() => setMenuOpen(false)}>
+                      <LogIn className="size-4" aria-hidden="true" />
+                      Entrar ou criar conta
+                    </Link>
+                  </Button>
+                )}
                 <PrivacyDialog
                   trigger={
                     <Button variant="ghost" className="justify-start">
