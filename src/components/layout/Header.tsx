@@ -96,6 +96,26 @@ export function Header() {
           >
             {theme === "light" ? <Moon className="size-4" /> : <Sun className="size-4" />}
           </Button>
+
+          {user ? (
+            <Button
+              variant="outline"
+              size="sm"
+              className="hidden md:inline-flex"
+              onClick={handleSignOut}
+            >
+              <LogOut className="size-4" aria-hidden="true" />
+              Sair
+            </Button>
+          ) : (
+            <Button size="sm" className="hidden md:inline-flex" asChild>
+              <Link to="/entrar">
+                <LogIn className="size-4" aria-hidden="true" />
+                Entrar
+              </Link>
+            </Button>
+          )}
+
           <Button
             variant="outline"
             size="sm"
@@ -105,6 +125,7 @@ export function Header() {
             <Trash2 className="size-4" aria-hidden="true" />
             Apagar meus dados
           </Button>
+
 
           <Sheet open={menuOpen} onOpenChange={setMenuOpen}>
             <SheetTrigger asChild>
