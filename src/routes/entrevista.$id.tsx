@@ -283,12 +283,18 @@ function InterviewRoom() {
   const spokenForRef = useRef<number | null>(null);
 
   useEffect(() => {
-    setSession(getInterview(id) ?? null);
+    const found = getInterview(id);
+    setSession(found ?? null);
     setLoaded(true);
     warmUpVoices();
     setVoiceSupported(isRecognitionSupported());
     setTtsSupported(isSpeechSynthesisSupported());
+    // Enquanto os dados chegam do banco, tenta de novo quando o armazenamento mudar.
+    return subscribeInterviewStore(() => {
+      setSession((current) => current ?? getInterview(id) ?? null);
+    });
   }, [id]);
+
 
   // Encerra áudio e captura ao sair da página.
   useEffect(() => {
