@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
-import { getInterview } from "@/lib/interview/store";
+import { getInterview, subscribeInterviewStore } from "@/lib/interview/store";
 import { INTERVIEW_TYPE_LABELS, type InterviewSession } from "@/lib/interview/schemas";
 
 export const Route = createFileRoute("/entrevista/$id/relatorio")({
