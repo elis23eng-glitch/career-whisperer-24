@@ -54,6 +54,9 @@ function ReportPage() {
   useEffect(() => {
     setSession(getInterview(id) ?? null);
     setLoaded(true);
+    return subscribeInterviewStore(() => {
+      setSession((current) => current ?? getInterview(id) ?? null);
+    });
   }, [id]);
 
   if (!loaded) {
