@@ -52,9 +52,10 @@ const BENEFITS = [
   },
   {
     icon: ShieldCheck,
-    title: "Privacidade e agilidade",
-    text: "Use imediatamente, sem cadastro ou login.",
+    title: "Tudo salvo na sua conta",
+    text: "Entrevistas, respostas e relatórios ficam guardados com segurança.",
   },
+
 ];
 
 const STEPS = [
