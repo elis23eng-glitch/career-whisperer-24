@@ -52,9 +52,10 @@ const BENEFITS = [
   },
   {
     icon: ShieldCheck,
-    title: "Privacidade e agilidade",
-    text: "Use imediatamente, sem cadastro ou login.",
+    title: "Tudo salvo na sua conta",
+    text: "Entrevistas, respostas e relatórios ficam guardados com segurança.",
   },
+
 ];
 
 const STEPS = [
@@ -72,7 +73,7 @@ function Home() {
           <div>
             <Badge variant="secondary" className="mb-4 gap-1">
               <Sparkles className="size-3.5" aria-hidden="true" />
-              Sem cadastro e sem login
+              Suas entrevistas sempre salvas
             </Badge>
             <h1 className="text-4xl leading-tight sm:text-5xl">
               Encontre o melhor match entre seu currículo e a vaga.
