@@ -39,7 +39,14 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { averageOf, getInterview, getJob, getResume, saveInterview } from "@/lib/interview/store";
+import {
+  averageOf,
+  getInterview,
+  getJob,
+  getResume,
+  saveInterview,
+  subscribeInterviewStore,
+} from "@/lib/interview/store";
 import {
   buildInterviewReport,
   evaluateInterviewAnswer,
