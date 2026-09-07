@@ -140,6 +140,7 @@ function EntrarPage() {
               <TabsContent value="entrar">
                 <form className="space-y-4 pt-4" onSubmit={signIn}>
                   <Fields
+                    idPrefix="entrar"
                     email={email}
                     password={password}
                     onEmail={setEmail}
@@ -155,6 +156,7 @@ function EntrarPage() {
               <TabsContent value="criar">
                 <form className="space-y-4 pt-4" onSubmit={signUp}>
                   <Fields
+                    idPrefix="criar"
                     email={email}
                     password={password}
                     onEmail={setEmail}
@@ -175,11 +177,13 @@ function EntrarPage() {
 }
 
 function Fields({
+  idPrefix,
   email,
   password,
   onEmail,
   onPassword,
 }: {
+  idPrefix: string;
   email: string;
   password: string;
   onEmail: (v: string) => void;
@@ -188,9 +192,9 @@ function Fields({
   return (
     <>
       <div className="space-y-2">
-        <Label htmlFor="email">E-mail</Label>
+        <Label htmlFor={`${idPrefix}-email`}>E-mail</Label>
         <Input
-          id="email"
+          id={`${idPrefix}-email`}
           type="email"
           autoComplete="email"
           required
@@ -199,9 +203,9 @@ function Fields({
         />
       </div>
       <div className="space-y-2">
-        <Label htmlFor="password">Senha</Label>
+        <Label htmlFor={`${idPrefix}-password`}>Senha</Label>
         <Input
-          id="password"
+          id={`${idPrefix}-password`}
           type="password"
           autoComplete="current-password"
           minLength={6}
