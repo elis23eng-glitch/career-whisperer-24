@@ -83,7 +83,7 @@ export function Header() {
 
   return (
     <header className="no-print sticky top-0 z-40 w-full border-b bg-background/85 backdrop-blur">
-      <div className="mx-auto flex h-16 max-w-6xl items-center gap-3 px-4">
+      <div className="mx-auto flex h-14 max-w-6xl items-center gap-3 px-3 sm:px-4 md:h-16">
         <Link to="/" className="flex items-center gap-2" aria-label="MatchCV, página inicial">
           <span className="flex size-9 items-center justify-center rounded-xl bg-primary text-primary-foreground">
             <FileSearch className="size-5" aria-hidden="true" />
@@ -158,11 +158,11 @@ export function Header() {
                 <Menu className="size-4" />
               </Button>
             </SheetTrigger>
-            <SheetContent side="right" className="w-[85vw] sm:w-80">
+            <SheetContent side="right" className="w-[85vw] overflow-y-auto sm:w-80">
               <SheetHeader>
                 <SheetTitle>Menu</SheetTitle>
               </SheetHeader>
-              <div className="flex flex-col gap-2 px-4">
+              <div className="flex flex-col gap-2 px-4 pb-8">
                 {NAV.map((item) => (
                   <Link
                     key={item.to}
