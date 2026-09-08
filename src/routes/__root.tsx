@@ -18,6 +18,7 @@ import { Button } from "@/components/ui/button";
 import { PrivacyDialog } from "@/components/PrivacyDialog";
 import { AuthProvider } from "@/hooks/useAuth";
 import { RequireAuth } from "@/components/auth/RequireAuth";
+import { MobileTabBar } from "@/components/layout/MobileTabBar";
 
 function NotFoundComponent() {
   return (
@@ -75,7 +76,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   head: () => ({
     meta: [
       { charSet: "utf-8" },
-      { name: "viewport", content: "width=device-width, initial-scale=1" },
+      {
+        name: "viewport",
+        content: "width=device-width, initial-scale=1, viewport-fit=cover",
+      },
       { title: "MatchCV | Currículo ATS e Match de Vagas" },
       {
         name: "description",
@@ -147,7 +151,7 @@ function RootComponent() {
             )}
           </main>
 
-          <footer className="no-print border-t bg-secondary/60">
+          <footer className="no-print border-t bg-secondary/60 pb-16 md:pb-0">
             <div className="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-8 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
               <p>
                 MatchCV — análise de compatibilidade entre currículo e vaga, com entrevista
@@ -162,6 +166,8 @@ function RootComponent() {
               />
             </div>
           </footer>
+
+          <MobileTabBar />
         </div>
         <Toaster position="top-center" richColors />
       </AuthProvider>
