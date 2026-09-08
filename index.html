@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MatchCV Recruiter — Currículo e Entrevista com IA</title>
+  <meta name="description" content="Compare seu currículo com uma vaga, descubra palavras-chave e treine entrevistas com IA por texto ou voz." />
+  <meta property="og:title" content="MatchCV Recruiter — Currículo e Entrevista com IA" />
+  <meta property="og:description" content="Analise a vaga, encontre lacunas e treine entrevistas com feedback estruturado." />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --deep-blue: #0f172a;
+      --light-blue: #3b82f6;
+      --soft-blue: #60a5fa;
+      --white: #ffffff;
+      --soft-green: #22c55e;
+      --light-gray: #f8fafc;
+      --muted: #64748b;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--deep-blue);
+      background: var(--white);
+      line-height: 1.6;
+    }
+
+    .hero {
+      background: linear-gradient(135deg, var(--deep-blue) 0%, #1e3a8a 100%);
+      color: var(--white);
+      padding: 5rem 1.5rem 6rem;
+      text-align: center;
+    }
+
+    .hero h1 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      line-height: 1.15;
+      max-width: 800px;
+      margin: 0 auto 1rem;
+    }
+
+    .hero p {
+      font-size: 1.125rem;
+      color: #cbd5e1;
+      max-width: 640px;
+      margin: 0 auto 2rem;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.875rem 1.75rem;
+      border-radius: 0.75rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    .btn-primary {
+      background: var(--soft-green);
+      color: var(--white);
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--white);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1rem;
+    }
+
+    .features {
+      background: var(--light-gray);
+      padding: 4rem 1.5rem;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .features h2 {
+      text-align: center;
+      font-size: 1.875rem;
+      font-weight: 700;
+      margin-bottom: 2.5rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .card {
+      background: var(--white);
+      border-radius: 1rem;
+      padding: 1.75rem;
+      box-shadow: 0 4px 20px rgba(15, 23, 42, 0.06);
+      border: 1px solid #e2e8f0;
+    }
+
+    .card-icon {
+      width: 2.75rem;
+      height: 2.75rem;
+      border-radius: 0.75rem;
+      background: rgba(59, 130, 246, 0.1);
+      color: var(--light-blue);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1rem;
+    }
+
+    .card h3 {
+      font-size: 1.125rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+
+    .card p {
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .cta {
+      padding: 4rem 1.5rem;
+      text-align: center;
+    }
+
+    .cta h2 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+    }
+
+    .cta p {
+      color: var(--muted);
+      max-width: 560px;
+      margin: 0 auto 1.5rem;
+    }
+
+    footer {
+      text-align: center;
+      padding: 2rem 1.5rem;
+      color: var(--muted);
+      font-size: 0.875rem;
+      border-top: 1px solid #e2e8f0;
+    }
+
+    @media (max-width: 640px) {
+      .hero h1 {
+        font-size: 2rem;
+      }
+
+      .hero {
+        padding: 3.5rem 1rem 4.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <section class="hero">
+    <h1>Encontre o melhor match entre seu currículo e a vaga.</h1>
+    <p>
+      Analise oportunidades, descubra o que o recrutador procura e treine entrevistas com IA por texto ou voz.
+    </p>
+    <div class="actions">
+      <a class="btn btn-primary" href="https://career-whisperer-24.lovable.app" target="_blank" rel="noopener noreferrer">
+        Acessar o app
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+      </a>
+      <a class="btn btn-secondary" href="https://github.com" target="_blank" rel="noopener noreferrer">
+        Ver no GitHub
+      </a>
+    </div>
+  </section>
+
+  <section class="features">
+    <div class="container">
+      <h2>Por que usar o MatchCV Recruiter</h2>
+      <div class="grid">
+        <div class="card">
+          <div class="card-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m16 12-4-4-4 4"/><path d="M12 16V8"/></svg>
+          </div>
+          <h3>Match inteligente</h3>
+          <p>Compare vaga e currículo de forma estruturada e veja o score de compatibilidade em segundos.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M16 13H8"/><path d="M16 17H8"/><path d="M10 9H8"/></svg>
+          </div>
+          <h3>Currículo ATS friendly</h3>
+          <p>Gere uma versão direcionada da vaga e exporte em PDF, DOCX ou TXT.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg>
+          </div>
+          <h3>Entrevista por voz</h3>
+          <p>Treine respostas faladas com transcrição, legendas e feedback escrito detalhado.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          </div>
+          <h3>Feedback STAR</h3>
+          <p>Receba avaliação por critérios, plano de ação e sugestões para melhorar suas respostas.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta">
+    <h2>Pronto para se preparar melhor?</h2>
+    <p>Cadastre-se gratuitamente, salve suas vagas, currículos e entrevistas na nuvem e acompanhe sua evolução.</p>
+    <a class="btn btn-primary" href="https://career-whisperer-24.lovable.app" target="_blank" rel="noopener noreferrer">
+      Começar agora
+    </a>
+  </section>
+
+  <footer>
+    <p>MatchCV Recruiter — Feito com 💙 no <a href="https://lovable.dev" target="_blank" rel="noopener noreferrer" style="color: var(--light-blue); text-decoration: none;">Lovable</a>.</p>
+  </footer>
+</body>
+</html>
