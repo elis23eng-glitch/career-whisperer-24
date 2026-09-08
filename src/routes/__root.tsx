@@ -151,7 +151,7 @@ function RootComponent() {
             )}
           </main>
 
-          <footer className="no-print border-t bg-secondary/60">
+          <footer className="no-print border-t bg-secondary/60 pb-16 md:pb-0">
             <div className="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-8 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
               <p>
                 MatchCV — análise de compatibilidade entre currículo e vaga, com entrevista
@@ -166,6 +166,8 @@ function RootComponent() {
               />
             </div>
           </footer>
+
+          <MobileTabBar />
         </div>
         <Toaster position="top-center" richColors />
       </AuthProvider>
