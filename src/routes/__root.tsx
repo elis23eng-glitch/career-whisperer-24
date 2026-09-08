@@ -18,6 +18,7 @@ import { Button } from "@/components/ui/button";
 import { PrivacyDialog } from "@/components/PrivacyDialog";
 import { AuthProvider } from "@/hooks/useAuth";
 import { RequireAuth } from "@/components/auth/RequireAuth";
+import { MobileTabBar } from "@/components/layout/MobileTabBar";
 
 function NotFoundComponent() {
   return (
@@ -75,7 +76,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   head: () => ({
     meta: [
       { charSet: "utf-8" },
-      { name: "viewport", content: "width=device-width, initial-scale=1" },
+      {
+        name: "viewport",
+        content: "width=device-width, initial-scale=1, viewport-fit=cover",
+      },
       { title: "MatchCV | Currículo ATS e Match de Vagas" },
       {
         name: "description",
