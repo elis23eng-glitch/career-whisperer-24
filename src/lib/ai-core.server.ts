@@ -14,9 +14,21 @@ import {
 import { jobExtractionSchema, matchResultSchema, resumeContentSchema } from "./types";
 import type { JobExtraction, MatchResultData, ResumeContent } from "./types";
 
+export type AiUnavailableError = Error & { aiUnavailable?: true };
+
+function unavailable(message: string): AiUnavailableError {
+  const error = new Error(message) as AiUnavailableError;
+  error.aiUnavailable = true;
+  return error;
+}
+
+export function isAiUnavailable(error: unknown) {
+  return Boolean((error as AiUnavailableError | null)?.aiUnavailable);
+}
+
 function gateway() {
   const key = process.env.LOVABLE_API_KEY;
-  if (!key) throw new Error("Serviço de IA indisponível no momento.");
+  if (!key) throw unavailable("Serviço de IA indisponível no momento.");
   return createOpenAICompatible({
     name: "lovable-gateway",
     baseURL: "https://ai.gateway.lovable.dev/v1",
@@ -25,6 +37,7 @@ function gateway() {
     supportsStructuredOutputs: true,
   });
 }
+
 
 function parseJson(raw: string) {
   const cleaned = raw
