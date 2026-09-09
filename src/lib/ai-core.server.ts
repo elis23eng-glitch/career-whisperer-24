@@ -60,21 +60,21 @@ function gatewayStatus(error: unknown): number | undefined {
 }
 
 function mapGatewayError(error: unknown): Error | undefined {
+  if (isAiUnavailable(error)) return error as Error;
   const status = gatewayStatus(error);
   const body = error instanceof Error ? error.message : String(error ?? "");
   if (status === 402 || /not enough credits|payment_required/i.test(body)) {
-    return new Error(
-      "Os créditos de IA do projeto acabaram. Recarregue os créditos no painel do Lovable (Settings → Workspace → Usage) para voltar a gerar análises.",
-    );
+    return unavailable("Assistente inteligente indisponível no momento.");
   }
   if (status === 429 || /rate.?limit/i.test(body)) {
     return new Error("Muitas solicitações em sequência. Aguarde alguns segundos e tente novamente.");
   }
   if (status === 401 || status === 403) {
-    return new Error("Serviço de IA sem autorização. Verifique a chave de IA do projeto.");
+    return unavailable("Assistente inteligente indisponível no momento.");
   }
   return undefined;
 }
+
 
 export async function callAi<S extends z.ZodTypeAny>(
   system: string,
