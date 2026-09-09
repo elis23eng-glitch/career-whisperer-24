@@ -1,4 +1,4 @@
-import { callAi } from "@/lib/ai-core.server";
+import { callAi, isAiUnavailable } from "@/lib/ai-core.server";
 import {
   DIFFICULTY_LABELS,
   INTERVIEW_TYPE_LABELS,
@@ -109,7 +109,8 @@ function typeGuidance(type: Ctx["config"]["type"]) {
 }
 
 export async function runOpening(data: Ctx) {
-  return callAi(
+  try {
+    return await callAi(
     RECRUITER_SYSTEM,
     `Inicie uma entrevista simulada.
 Em "intro", apresente-se brevemente como recrutador, apresente a vaga em 2 ou 3 frases e explique como a
@@ -123,6 +124,11 @@ ${contextBlock(data)}`,
     openingSchema,
     OPENING_HINT,
   );
+  } catch (error) {
+    if (!isAiUnavailable(error)) throw error;
+    const { localOpening } = await import("./local-interview.server");
+    return localOpening(data);
+  }
 }
 
 export async function runNextQuestion(data: z.infer<typeof nextQuestionInput>) {
@@ -135,7 +141,8 @@ export async function runNextQuestion(data: z.infer<typeof nextQuestionInput>) {
     ? `\nA resposta anterior ficou incompleta. Faça uma pergunta de aprofundamento sobre: ${data.forceFollowUp}. Marque isFollowUp como true.`
     : "";
 
-  return callAi(
+  try {
+    return await callAi(
     RECRUITER_SYSTEM,
     `Gere a pergunta número ${data.askedCount + 1} de ${data.config.questionCount} desta entrevista.
 Considere as respostas anteriores para adaptar a pergunta e evitar repetição.
@@ -148,10 +155,16 @@ ${history || "(ainda não há respostas)"}`,
     questionSchema,
     QUESTION_HINT,
   );
+  } catch (error) {
+    if (!isAiUnavailable(error)) throw error;
+    const { localNextQuestion } = await import("./local-interview.server");
+    return localNextQuestion(data);
+  }
 }
 
 export async function runEvaluate(data: z.infer<typeof evaluateInput>) {
-  return callAi(
+  try {
+    return await callAi(
     RECRUITER_SYSTEM,
     `Avalie a resposta do candidato.
 Em "criteria", avalie EXATAMENTE estes critérios, cada um com nota de 1 a 5 e um comentário explicando a nota:
@@ -175,6 +188,11 @@ RESPOSTA DO CANDIDATO: """${data.answer.slice(0, 6000)}"""`,
     evaluationSchema,
     EVAL_HINT,
   );
+  } catch (error) {
+    if (!isAiUnavailable(error)) throw error;
+    const { localEvaluate } = await import("./local-interview.server");
+    return localEvaluate(data);
+  }
 }
 
 export async function runReport(data: z.infer<typeof reportInput>) {
@@ -194,7 +212,8 @@ export async function runReport(data: z.infer<typeof reportInput>) {
         .join("\n")
     : "";
 
-  return callAi(
+  try {
+    return await callAi(
     RECRUITER_SYSTEM,
     `Gere o relatório final desta entrevista simulada, em linguagem simples e encorajadora.
 "actionPlan" deve ter exatamente 3 ações prioritárias de preparação.
@@ -212,4 +231,9 @@ ${previous || "(nenhuma)"}`,
     reportSchema,
     REPORT_HINT,
   );
+  } catch (error) {
+    if (!isAiUnavailable(error)) throw error;
+    const { localReport } = await import("./local-interview.server");
+    return localReport(data);
+  }
 }
