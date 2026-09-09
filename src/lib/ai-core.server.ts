@@ -122,23 +122,24 @@ export async function runAnalysis(data: { jobText: string; resumeText: string })
   resume: ResumeContent;
   match: MatchResultData;
 }> {
-  const job = await callAi(
-    ANALYST_SYSTEM,
-    `Extraia os dados estruturados desta descrição de vaga. Se um campo não estiver presente, deixe vazio.\n\nDESCRIÇÃO DA VAGA:\n"""${data.jobText.slice(0, 20000)}"""`,
-    jobExtractionSchema,
-    JOB_HINT,
-  );
+  try {
+    const job = await callAi(
+      ANALYST_SYSTEM,
+      `Extraia os dados estruturados desta descrição de vaga. Se um campo não estiver presente, deixe vazio.\n\nDESCRIÇÃO DA VAGA:\n"""${data.jobText.slice(0, 20000)}"""`,
+      jobExtractionSchema,
+      JOB_HINT,
+    );
 
-  const resume = await callAi(
-    ANALYST_SYSTEM,
-    `Organize o texto do currículo abaixo nas seções do schema. Nunca invente dados: se algo não existir, deixe vazio.\n\nCURRÍCULO:\n"""${data.resumeText.slice(0, 25000)}"""`,
-    resumeContentSchema,
-    RESUME_HINT,
-  );
+    const resume = await callAi(
+      ANALYST_SYSTEM,
+      `Organize o texto do currículo abaixo nas seções do schema. Nunca invente dados: se algo não existir, deixe vazio.\n\nCURRÍCULO:\n"""${data.resumeText.slice(0, 25000)}"""`,
+      resumeContentSchema,
+      RESUME_HINT,
+    );
 
-  const match = await callAi(
-    ANALYST_SYSTEM,
-    `Compare a vaga e o currículo abaixo.
+    const match = await callAi(
+      ANALYST_SYSTEM,
+      `Compare a vaga e o currículo abaixo.
 Calcule um índice geral de 0 a 100 com esta ponderação: experiência 25%, competências técnicas 25%,
 responsabilidades semelhantes 20%, formação e certificações 10%, palavras-chave 10%,
 competências comportamentais 5%, localização/modalidade/disponibilidade 5%.
@@ -154,11 +155,16 @@ VAGA (estruturada): ${JSON.stringify(job).slice(0, 12000)}
 VAGA (texto): """${data.jobText.slice(0, 12000)}"""
 
 CURRÍCULO (estruturado): ${JSON.stringify(resume).slice(0, 15000)}`,
-    matchResultSchema,
-    MATCH_HINT,
-  );
+      matchResultSchema,
+      MATCH_HINT,
+    );
 
-  return { job, resume, match };
+    return { job, resume, match };
+  } catch (error) {
+    if (!isAiUnavailable(error)) throw error;
+    const { localAnalysis } = await import("./local-analysis.server");
+    return localAnalysis(data);
+  }
 }
 
 export async function runGenerate(data: {
@@ -173,9 +179,10 @@ export async function runGenerate(data: {
         data.confirmedExperiences,
       ).slice(0, 6000)}`
     : "";
-  return callAi(
-    WRITER_SYSTEM,
-    `Gere a versão direcionada do currículo para a vaga.
+  try {
+    return await callAi(
+      WRITER_SYSTEM,
+      `Gere a versão direcionada do currículo para a vaga.
 
 VAGA: ${JSON.stringify(data.jobExtraction).slice(0, 10000)}
 
@@ -184,21 +191,44 @@ TEXTO DA VAGA: """${data.jobText.slice(0, 8000)}"""
 CURRÍCULO ORIGINAL (estruturado): ${JSON.stringify(data.resumeContent).slice(0, 15000)}
 
 CURRÍCULO ORIGINAL (texto): """${(data.resumeRawText ?? "").slice(0, 10000)}"""${confirmed}`,
-    resumeContentSchema,
-    RESUME_HINT,
-  );
+      resumeContentSchema,
+      RESUME_HINT,
+    );
+  } catch (error) {
+    if (!isAiUnavailable(error)) throw error;
+    const { localTailoredResume, localJobExtraction, localResumeContent } = await import(
+      "./local-analysis.server"
+    );
+    const job = jobExtractionSchema.safeParse(data.jobExtraction);
+    const resume = resumeContentSchema.safeParse(data.resumeContent);
+    return localTailoredResume(
+      resume.success ? resume.data : localResumeContent(data.resumeRawText ?? ""),
+      job.success ? job.data : localJobExtraction(data.jobText),
+      data.resumeRawText ?? "",
+    );
+  }
 }
 
 export async function runRewrite(data: { text: string; action: string; jobTitle: string }) {
-  return callAi(
-    REWRITER_SYSTEM,
-    `Ação solicitada: ${data.action}.
+  try {
+    return await callAi(
+      REWRITER_SYSTEM,
+      `Ação solicitada: ${data.action}.
 Vaga alvo: ${data.jobTitle || "não informada"}.
 Texto atual: """${data.text}"""`,
-    suggestionSchema,
-    `{"suggestion":""}`,
-  );
+      suggestionSchema,
+      `{"suggestion":""}`,
+    );
+  } catch (error) {
+    if (!isAiUnavailable(error)) throw error;
+    const cleaned = data.text
+      .replace(/\s+/g, " ")
+      .replace(/\s([,.;:])/g, "$1")
+      .trim();
+    return { suggestion: cleaned };
+  }
 }
+
 
 export async function runFetchUrl(url: string) {
   try {
