@@ -32,6 +32,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { analyzeMatch, fetchJobFromUrl } from "@/lib/ai.functions";
+import { NICHE_LIST, nicheTerms } from "@/lib/niches";
 import { extractTextFromFile, validateFile, sanitizeText } from "@/lib/extract";
 import { SAMPLE_JOB, SAMPLE_RESUME } from "@/lib/sample";
 import {
@@ -277,6 +278,7 @@ function AnalysisWizard() {
           jobText: sanitizeText(draft.jobText),
           jobUrl: draft.jobUrl,
           resumeText: sanitizeText(draft.resumeText),
+          niche: draft.niche ?? "geral",
         },
       });
 
@@ -338,6 +340,7 @@ function AnalysisWizard() {
           },
         ],
         confirmedExperiences: [],
+        niche: draft.niche ?? "geral",
       };
 
       saveAnalysis(record);
@@ -399,6 +402,34 @@ function AnalysisWizard() {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
+            <fieldset>
+              <legend className="text-sm font-medium">Área da vaga (nicho)</legend>
+              <div className="mt-2 grid gap-2 sm:grid-cols-3" role="radiogroup">
+                {NICHE_LIST.map((n) => {
+                  const active = (draft.niche ?? "geral") === n.id;
+                  return (
+                    <button
+                      key={n.id}
+                      type="button"
+                      role="radio"
+                      aria-checked={active}
+                      onClick={() => update({ niche: n.id })}
+                      className={`rounded-lg border p-3 text-left transition ${active ? "border-primary bg-accent" : "hover:bg-muted"}`}
+                    >
+                      <span className="block font-medium">{n.label}</span>
+                      <span className="block text-xs text-muted-foreground">{n.description}</span>
+                    </button>
+                  );
+                })}
+              </div>
+              {draft.niche && draft.niche !== "geral" ? (
+                <div className="mt-3 flex flex-wrap gap-1.5" aria-label="Palavras-chave do nicho">
+                  {nicheTerms(draft.niche).slice(0, 14).map((t) => (
+                    <Badge key={t} variant="secondary">{t}</Badge>
+                  ))}
+                </div>
+              ) : null}
+            </fieldset>
             <Tabs defaultValue="texto">
               <TabsList>
                 <TabsTrigger value="texto">
