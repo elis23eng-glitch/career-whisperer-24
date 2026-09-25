@@ -1,3 +1,4 @@
+import { NICHES, nicheTerms, type Niche } from "./niches";
 import { generateText } from "ai";
 import { createOpenAICompatible } from "@ai-sdk/openai-compatible";
 import type { z } from "zod";
@@ -117,7 +118,7 @@ export async function callAi<S extends z.ZodTypeAny>(
 }
 
 
-export async function runAnalysis(data: { jobText: string; resumeText: string }): Promise<{
+export async function runAnalysis(data: { jobText: string; resumeText: string; niche?: Niche }): Promise<{
   job: JobExtraction;
   resume: ResumeContent;
   match: MatchResultData;
@@ -148,6 +149,7 @@ Avalie também o currículo atual quanto à leitura por sistemas ATS (atsScore d
 títulos de seções reconhecíveis, dados de contato legíveis, ordem cronológica, uso de palavras-chave,
 ausência de tabelas complexas, ausência de imagens, ausência de colunas múltiplas, consistência de datas,
 tamanho adequado, bullets objetivos, ortografia, compatibilidade com a vaga).
+${nicheContext(data.niche)}
 Liste no evidenceMap todos os requisitos obrigatórios e desejáveis com a evidência literal do currículo.
 
 VAGA (estruturada): ${JSON.stringify(job).slice(0, 12000)}
@@ -252,4 +254,12 @@ export async function runFetchUrl(url: string) {
   } catch {
     return { ok: false as const, text: "" };
   }
+}
+
+function nicheContext(niche?: Niche) {
+  if (!niche || niche === "geral") return "";
+  const info = NICHES[niche];
+  return `NICHO ESCOLHIDO PELO CANDIDATO: ${info.label} (${info.description}).
+Dê atenção especial a estas palavras-chave do nicho quando forem pertinentes à vaga: ${nicheTerms(niche).join(", ")}.
+Nas recomendações, use a linguagem e as boas práticas desse nicho.`;
 }

@@ -3,6 +3,7 @@ import type { Session, User } from "@supabase/supabase-js";
 
 import { supabase } from "@/integrations/supabase/client";
 import { clearLocalCache, hydrateFromCloud } from "@/lib/interview/store";
+import { clearAnalysesCache, hydrateAnalysesFromCloud } from "@/lib/storage";
 
 interface AuthState {
   user: User | null;
@@ -32,12 +33,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (next?.user && hydratedFor !== next.user.id) {
         hydratedFor = next.user.id;
         setSyncing(true);
-        hydrateFromCloud(next.user.id)
+        Promise.all([hydrateFromCloud(next.user.id), hydrateAnalysesFromCloud(next.user.id)])
           .catch((err) => console.error("Falha ao carregar seus dados", err))
           .finally(() => setSyncing(false));
       }
       if (!next) {
-        if (hydratedFor) clearLocalCache();
+        if (hydratedFor) {
+          clearLocalCache();
+          clearAnalysesCache();
+        }
         hydratedFor = null;
       }
     };

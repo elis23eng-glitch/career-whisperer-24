@@ -266,6 +266,7 @@ export interface AnalysisRecord {
   match: MatchResult;
   versions: ResumeVersion[];
   confirmedExperiences: ConfirmedExperience[];
+  niche?: "geral" | "tecnologia" | "engenharia_civil";
 }
 
 export interface ConfirmedExperience {
