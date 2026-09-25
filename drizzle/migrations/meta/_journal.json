@@ -8,6 +8,13 @@
       "when": 1788400767415,
       "tag": "0000_create_interview_tables",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1790373860769,
+      "tag": "0001_create_analyses",
+      "breakpoints": true
     }
   ]
 }

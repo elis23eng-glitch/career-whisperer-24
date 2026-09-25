@@ -14,6 +14,45 @@ export type Database = {
   }
   public: {
     Tables: {
+      analyses: {
+        Row: {
+          ats_score: number | null
+          company: string
+          created_at: string
+          data: Json
+          id: string
+          job_title: string
+          niche: string
+          overall_score: number | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          ats_score?: number | null
+          company?: string
+          created_at?: string
+          data?: Json
+          id: string
+          job_title?: string
+          niche?: string
+          overall_score?: number | null
+          updated_at?: string
+          user_id?: string
+        }
+        Update: {
+          ats_score?: number | null
+          company?: string
+          created_at?: string
+          data?: Json
+          id?: string
+          job_title?: string
+          niche?: string
+          overall_score?: number | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       interview_turns: {
         Row: {
           answer: string
