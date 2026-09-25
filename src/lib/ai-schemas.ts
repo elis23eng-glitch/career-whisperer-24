@@ -6,6 +6,7 @@ export const analyzeInput = z.object({
   jobText: z.string().min(30),
   jobUrl: z.string().default(""),
   resumeText: z.string().min(30),
+  niche: z.enum(["geral", "tecnologia", "engenharia_civil"]).default("geral"),
 });
 
 export const generateInput = z.object({

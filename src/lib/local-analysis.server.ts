@@ -3,6 +3,7 @@
  * Usada automaticamente quando o serviço de IA não está disponível,
  * para que o candidato nunca fique sem resultado.
  */
+import { NICHES, nicheTerms, type Niche } from "./niches";
 import type { JobExtraction, MatchResultData, ResumeContent } from "./types";
 
 const STOPWORDS = new Set(
@@ -379,8 +380,17 @@ export function localMatch(
   };
 }
 
-export function localAnalysis(data: { jobText: string; resumeText: string }) {
+export function localAnalysis(data: { jobText: string; resumeText: string; niche?: Niche }) {
   const job = localJobExtraction(data.jobText);
+  if (data.niche && data.niche !== "geral") {
+    const jobNorm = normalize(data.jobText);
+    const existing = new Set(job.keywords.map((k) => normalize(k.term)));
+    const extra = nicheTerms(data.niche)
+      .filter((t) => jobNorm.includes(normalize(t)) && !existing.has(normalize(t)))
+      .map((term) => ({ term, importance: "essencial" as const }));
+    job.keywords = [...extra, ...job.keywords].slice(0, 30);
+    job.area = job.area || NICHES[data.niche].label;
+  }
   const resume = localResumeContent(data.resumeText);
   const match = localMatch(job, data.resumeText, resume);
   return { job, resume, match };
