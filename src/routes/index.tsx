@@ -242,6 +242,17 @@ function Home() {
           </div>
         </div>
       </section>
+      <section className="mx-auto max-w-4xl px-4 py-14" aria-labelledby="faq-title">
+        <h2 id="faq-title" className="text-2xl font-bold">Perguntas frequentes</h2>
+        <dl className="mt-6 space-y-5">
+          {FAQ.map((f) => (
+            <div key={f.q}>
+              <dt className="font-semibold">{f.q}</dt>
+              <dd className="mt-1 text-muted-foreground">{f.a}</dd>
+            </div>
+          ))}
+        </dl>
+      </section>
     </div>
   );
 }
