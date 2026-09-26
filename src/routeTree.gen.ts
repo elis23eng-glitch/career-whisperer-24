@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as VagasRouteImport } from './routes/vagas'
 import { Route as PainelRouteImport } from './routes/painel'
 import { Route as MeuCurriculoRouteImport } from './routes/meu-curriculo'
+import { Route as EvolucaoMatchRouteImport } from './routes/evolucao-match'
 import { Route as EvolucaoRouteImport } from './routes/evolucao'
 import { Route as EntrarRouteImport } from './routes/entrar'
 import { Route as CurriculosRouteImport } from './routes/curriculos'
@@ -36,6 +37,11 @@ const PainelRoute = PainelRouteImport.update({
 const MeuCurriculoRoute = MeuCurriculoRouteImport.update({
   id: '/meu-curriculo',
   path: '/meu-curriculo',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EvolucaoMatchRoute = EvolucaoMatchRouteImport.update({
+  id: '/evolucao-match',
+  path: '/evolucao-match',
   getParentRoute: () => rootRouteImport,
 } as any)
 const EvolucaoRoute = EvolucaoRouteImport.update({
@@ -96,6 +102,7 @@ export interface FileRoutesByFullPath {
   '/curriculos': typeof CurriculosRoute
   '/entrar': typeof EntrarRoute
   '/evolucao': typeof EvolucaoRoute
+  '/evolucao-match': typeof EvolucaoMatchRoute
   '/meu-curriculo': typeof MeuCurriculoRoute
   '/painel': typeof PainelRoute
   '/vagas': typeof VagasRoute
@@ -111,6 +118,7 @@ export interface FileRoutesByTo {
   '/curriculos': typeof CurriculosRoute
   '/entrar': typeof EntrarRoute
   '/evolucao': typeof EvolucaoRoute
+  '/evolucao-match': typeof EvolucaoMatchRoute
   '/meu-curriculo': typeof MeuCurriculoRoute
   '/painel': typeof PainelRoute
   '/vagas': typeof VagasRoute
@@ -127,6 +135,7 @@ export interface FileRoutesById {
   '/curriculos': typeof CurriculosRoute
   '/entrar': typeof EntrarRoute
   '/evolucao': typeof EvolucaoRoute
+  '/evolucao-match': typeof EvolucaoMatchRoute
   '/meu-curriculo': typeof MeuCurriculoRoute
   '/painel': typeof PainelRoute
   '/vagas': typeof VagasRoute
@@ -144,6 +153,7 @@ export interface FileRouteTypes {
     | '/curriculos'
     | '/entrar'
     | '/evolucao'
+    | '/evolucao-match'
     | '/meu-curriculo'
     | '/painel'
     | '/vagas'
@@ -159,6 +169,7 @@ export interface FileRouteTypes {
     | '/curriculos'
     | '/entrar'
     | '/evolucao'
+    | '/evolucao-match'
     | '/meu-curriculo'
     | '/painel'
     | '/vagas'
@@ -174,6 +185,7 @@ export interface FileRouteTypes {
     | '/curriculos'
     | '/entrar'
     | '/evolucao'
+    | '/evolucao-match'
     | '/meu-curriculo'
     | '/painel'
     | '/vagas'
@@ -190,6 +202,7 @@ export interface RootRouteChildren {
   CurriculosRoute: typeof CurriculosRoute
   EntrarRoute: typeof EntrarRoute
   EvolucaoRoute: typeof EvolucaoRoute
+  EvolucaoMatchRoute: typeof EvolucaoMatchRoute
   MeuCurriculoRoute: typeof MeuCurriculoRoute
   PainelRoute: typeof PainelRoute
   VagasRoute: typeof VagasRoute
@@ -219,6 +232,13 @@ declare module '@tanstack/react-router' {
       path: '/meu-curriculo'
       fullPath: '/meu-curriculo'
       preLoaderRoute: typeof MeuCurriculoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/evolucao-match': {
+      id: '/evolucao-match'
+      path: '/evolucao-match'
+      fullPath: '/evolucao-match'
+      preLoaderRoute: typeof EvolucaoMatchRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/evolucao': {
@@ -313,6 +333,7 @@ const rootRouteChildren: RootRouteChildren = {
   CurriculosRoute: CurriculosRoute,
   EntrarRoute: EntrarRoute,
   EvolucaoRoute: EvolucaoRoute,
+  EvolucaoMatchRoute: EvolucaoMatchRoute,
   MeuCurriculoRoute: MeuCurriculoRoute,
   PainelRoute: PainelRoute,
   VagasRoute: VagasRoute,

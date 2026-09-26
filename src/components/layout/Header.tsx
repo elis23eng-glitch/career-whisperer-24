@@ -37,6 +37,7 @@ const NAV = [
   { to: "/analise", label: "Análise" },
   { to: "/entrevista/nova", label: "Entrevista" },
   { to: "/evolucao", label: "Minha evolução" },
+  { to: "/evolucao-match", label: "Evolução do match" },
   { to: "/como-funciona", label: "Como funciona" },
 ] as const;
 
