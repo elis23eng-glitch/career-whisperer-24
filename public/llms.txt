@@ -1,0 +1,22 @@
+# MatchCV Recruiter
+
+> Aplicativo web gratuito, em português do Brasil, que compara um currículo com uma vaga de emprego, calcula um score de compatibilidade (0-100), gera uma versão de currículo ATS Friendly e oferece entrevistas simuladas por texto ou voz com feedback no método STAR.
+
+Site: https://career-whisperer-24.lovable.app
+
+## Para quem é
+- Candidatos a vagas de Tecnologia (desenvolvimento, dados, produto, infraestrutura)
+- Candidatos a vagas de Engenharia Civil (planejamento, orçamento, gestão de processos, análise de dados)
+- Qualquer pessoa que queira adaptar o currículo para sistemas ATS
+
+## Principais recursos
+- Análise de compatibilidade entre currículo e vaga, com palavras-chave encontradas e ausentes
+- Escolha de nicho (Tecnologia, Engenharia Civil ou Geral) com palavras-chave específicas
+- Geração de currículo ATS (uma coluna, sem tabelas ou imagens) e exportação em PDF, DOCX e TXT
+- Painel com a evolução do match entre versões do currículo e histórico das análises salvo na conta
+- Entrevista simulada com recrutador virtual, por texto ou voz, em português ou inglês
+
+## Páginas
+- [Início](https://career-whisperer-24.lovable.app/)
+- [Como funciona](https://career-whisperer-24.lovable.app/como-funciona)
+- [Nova análise](https://career-whisperer-24.lovable.app/analise)

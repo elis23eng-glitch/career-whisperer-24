@@ -29,10 +29,54 @@ export const Route = createFileRoute("/")({
         content:
           "Analise a vaga, encontre lacunas e gere um currículo ATS direcionado em poucos minutos.",
       },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: SITE },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "keywords", content: "currículo ATS, match de vagas, currículo tecnologia, currículo engenharia civil, entrevista simulada, palavras-chave currículo" },
+    ],
+    links: [{ rel: "canonical", href: SITE }],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@graph": [
+            {
+              "@type": "WebApplication",
+              name: "MatchCV Recruiter",
+              url: SITE,
+              applicationCategory: "BusinessApplication",
+              operatingSystem: "Web",
+              inLanguage: "pt-BR",
+              offers: { "@type": "Offer", price: "0", priceCurrency: "BRL" },
+              description:
+                "Compara currículo e vaga, calcula score de compatibilidade, gera currículo ATS para Tecnologia e Engenharia Civil e simula entrevistas com IA.",
+            },
+            {
+              "@type": "FAQPage",
+              mainEntity: FAQ.map((f) => ({
+                "@type": "Question",
+                name: f.q,
+                acceptedAnswer: { "@type": "Answer", text: f.a },
+              })),
+            },
+          ],
+        }),
+      },
     ],
   }),
   component: Home,
 });
+
+const SITE = "https://career-whisperer-24.lovable.app/";
+
+const FAQ = [
+  { q: "O que é um currículo ATS Friendly?", a: "É um currículo em uma coluna, sem tabelas, imagens ou ícones, com títulos de seção padrão e palavras-chave da vaga, para que os sistemas de recrutamento (ATS) consigam ler todas as informações." },
+  { q: "O MatchCV é gratuito?", a: "Sim. A análise de compatibilidade, a geração do currículo ATS e a exportação em PDF, DOCX e TXT são gratuitas." },
+  { q: "Quais áreas o MatchCV atende de forma especializada?", a: "Tecnologia (desenvolvimento, dados, produto e infraestrutura) e Engenharia Civil (planejamento, orçamento, gestão de processos e análise de dados), além de um modo geral para qualquer área." },
+  { q: "Como é calculado o score de compatibilidade?", a: "O score de 0 a 100 pondera experiência, competências técnicas, responsabilidades, formação, palavras-chave, competências comportamentais e logística da vaga." },
+  { q: "Posso treinar entrevistas?", a: "Sim. O recrutador virtual faz perguntas baseadas na vaga e no seu currículo, por texto ou voz, e dá feedback no método STAR." },
+];
 
 const BENEFITS = [
   {
@@ -197,6 +241,17 @@ function Home() {
             </Button>
           </div>
         </div>
+      </section>
+      <section className="mx-auto max-w-4xl px-4 py-14" aria-labelledby="faq-title">
+        <h2 id="faq-title" className="text-2xl font-bold">Perguntas frequentes</h2>
+        <dl className="mt-6 space-y-5">
+          {FAQ.map((f) => (
+            <div key={f.q}>
+              <dt className="font-semibold">{f.q}</dt>
+              <dd className="mt-1 text-muted-foreground">{f.a}</dd>
+            </div>
+          ))}
+        </dl>
       </section>
     </div>
   );
